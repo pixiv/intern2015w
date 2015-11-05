@@ -1,0 +1,22 @@
+{% extends "layout.tpl.html" %}
+{% block title %}[{{ room.slug }}] {{ room.name }} | Wintern Chat{% endblock %}
+{% block content %}
+    {% if isLoggedIn %}
+        <form action="/rooms/{{ slug }}" class=comment method=post>
+            <input name=message>
+            <input name=user_id type=hidden value={{ loginUser.id }}>
+            <input name=slug type=hidden value={{ slug }}>
+            <button name=submit>更新</button>
+        </form>
+    {% else %}
+        <a href="/login">ログイン</a>
+    {% endif %}
+    <section class="content oneline">
+        <h1>{{ room.name }}[{{ room.slug }}]</h1>
+    </section>
+    <ul class="chat">
+        {% for t in talk %}
+            <li><a href="/@{{ users[t.user_id].slug }}" title="{{ users[t.user_id].name }}">@{{ users[t.user_id].slug }}</a>: {{ markdown(t.message) }} <time datetime="{{ t.posted_at|date('Y-m-d\\TH:i:s+09:00') }}">({{ t.posted_at }})</time></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,84 @@
+#!/usr/bin/env php
+<?php
+use Symfony\Component\Filesystem\Filesystem;
+require __DIR__ . '/vendor/autoload.php';
+
+error_reporting(E_ALL);
+
+$filesystem = new Filesystem();
+
+
+$env_path   = __DIR__ . '/.env';
+$sqlite     = __DIR__ . '/cache/db.sq3';
+$sqlite_dsn = sprintf('sqlite:%s', $sqlite);
+
+$session_dir = __DIR__ . '/cache/session';
+if (file_exists($session_dir)) {
+    $filesystem->remove($session_dir);
+    fwrite(STDERR, "[DEL] {$session_dir}\n");
+}
+$filesystem->mkdir($session_dir);
+
+$twig_dir = __DIR__ . '/cache/twig';
+if (file_exists($twig_dir)) {
+    $filesystem->remove($twig_dir);
+    fwrite(STDERR, "[DEL] {$twig_dir}\n");
+}
+$filesystem->mkdir($twig_dir);
+
+
+if (file_exists($sqlite)) {
+    unlink($sqlite);
+    fwrite(STDERR, "[DEL] {$sqlite}\n");
+}
+
+$content = sprintf('DB_DSN = "%s"\n', $sqlite_dsn);
+file_put_contents($env_path, $content);
+
+fwrite(STDERR, "[DSN] {$sqlite_dsn}\n");
+
+$pdo = new \PDO($sqlite_dsn, null, null, [PDO::ATTR_PERSISTENT => true]);
+
+$queries = [
+    'CREATE TABLE `users`( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `slug` TEXT UNIQUE, `name` TEXT )',
+    'CREATE TABLE `user_passwords`( `user_id` INTEGER PRIMARY KEY, `password` TEXT )',
+    'CREATE TABLE `user_profile`( `user_id` INTEGER PRIMARY KEY, `website` TEXT, `twitter` TEXT, `blood_type` TEXT )',
+    'CREATE TABLE `rooms`( `id` INTEGER PRIMARY KEY, `slug` TEXT UNIQUE, `name` TEXT )',
+    'CREATE TABLE `room_owners`( `user_id` INTEGER, `room_id` INTEGER )',
+    'CREATE UNIQUE INDEX `room_owners_user_room` ON `room_owners`( `user_id`, `room_id` )',
+    'CREATE TABLE `posts`( `room_id` INTEGER, `user_id` INTEGER, `posted_at` TEXT, `message` TEXT ) ',
+    'CREATE INDEX `post_user` ON `posts`( `user_id` )',
+    'CREATE INDEX `post_room` ON `posts`( `room_id` )',
+    'CREATE TABLE `mentions`( `to_user_id` INTEGER, `post_id` INTEGER )',
+    'CREATE INDEX `mention_to_user` ON `mentions`( `to_user_id` )',
+    'CREATE INDEX `mention_post_id` ON `mentions`( `post_id` )',
+    'CREATE TABLE `in_rooms`( `room_id` INTEGER, `user_id` INTEGER, `last` TEXT )',
+    'CREATE INDEX `in_room_room_id` ON `in_rooms`( `room_id` )',
+    'CREATE INDEX `in_room_user_id` ON `in_rooms`( `user_id` )',
+
+    'INSERT INTO `users` VALUES( 0, "system", "System" )',
+    'INSERT INTO `user_passwords` VALUES( 0, "system" )',
+    'INSERT INTO `users` VALUES( 1, "root", "super user" )',
+    'INSERT INTO `user_passwords` VALUES( 1, "nimda" )',
+    'INSERT INTO `user_profile` VALUES( 1, "http://pixiv.co.jp/", "pixiv", "AB" )',
+    'INSERT INTO `users` VALUES( 2, "chobi", "チョビ" )',
+    'INSERT INTO `user_passwords` VALUES( 2, "cbcb" )',
+    'INSERT INTO `user_profile` VALUES( 2, "http://times.pixiv.net/post/38140118669/%E3%83%94%E3%82%AF%E3%82%B7%E3%83%96%E3%81%AE%E7%A4%BE%E5%93%A1%E7%8A%AC", "chobi_pixiv", "Bombay" )',
+    'INSERT INTO `rooms` VALUES( 1, "operators", "運営委員会" )',
+    'INSERT INTO `rooms` VALUES( 2, "idobata-talks", "雑談の部屋" )',
+    'INSERT INTO `in_rooms` VALUES( 1, 1, "2015-04-04 11:11:11" )',
+    'INSERT INTO `in_rooms` VALUES( 1, 2, "2015-04-04 11:11:11" )',
+];
+
+foreach ($queries as $q) {
+    fwrite(STDERR, "[SQL] {$q}\n");
+    $stmt = $pdo->prepare($q);
+    if ($stmt === false) {
+       fwrite(STDERR, sprintf("[Error] Query error \n"));
+       die;
+    }
+    if (!$stmt->execute()) {
+       fwrite(STDERR, sprintf("[Error] %s\n", print_r($stmt->errorInfo(), true)));
+       die;
+    }
+}

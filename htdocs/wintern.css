@@ -1,0 +1,75 @@
+html {
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    background-image: url(/wall.jpg);
+    background-attachment: fixed;
+    min-height: 100%;
+    color: #CCC;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    color: #11C;
+}
+
+#navi {
+    top: 0;
+    margin: 0;
+    color: #CCC;
+}
+
+#navi h1 {
+    margin: 0;
+    font-size: medium;
+}
+
+.content {
+    background-color: #F0F0F0;
+    color: #111;
+}
+.content h1 {
+    font-size: medium;
+}
+
+.loginform {
+    background-color: #CCC;
+    color: #333;
+}
+
+.oneline * {
+    display: inline;
+}
+.oneline dt {
+    margin-left: 1.5em;
+}
+.oneline dt:after {
+    content: ":";
+}
+
+ul.chat {
+    color: #FFF;
+    list-style-type: none;
+}
+
+.chat time {
+    color: #AAA;
+    font-size: small;
+}
+
+dl.oneline dd {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+footer {
+    bottom: 0;
+    margin: 0;
+    text-align: center;
+    color: #CCC;
+}

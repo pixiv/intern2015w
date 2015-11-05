@@ -1,0 +1,11 @@
+/build/logs
+/build/phpdox
+/build/phploc
+/build/report
+/cache
+/phpunit.xml
+/vendor/*
+/.env
+/.idea
+/*.iml
+/.vagrant

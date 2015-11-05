@@ -1,0 +1,13 @@
+{% extends "layout.tpl.html" %}
+{% block title %}{{ user.name }} (@{{ user.slug }}) | Wintern Chat{% endblock %}
+{% block content %}
+    <section class="content">
+        <h1>{{ user.name }}{% if user.id == loginUser.id %}(それはあなたです！){% endif %}</h1>
+        <dl>
+            <dt>slug</dt>
+            <dd>@{{ user.slug }}</dd>
+            <dt>name</dt>
+            <dd>{{  user.name }}</dd>
+        </dl>
+    </section>
+{% endblock %}
