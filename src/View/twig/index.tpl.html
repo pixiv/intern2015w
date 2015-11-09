@@ -2,22 +2,22 @@
 {% block title %}Top{% endblock %}
 {% block content %}
     {% if isLoggedIn %}
-        <form action="/add_room" method=post class="loginform">
+        <form action="/add_room" method="post" class="loginform">
             <fieldset>
                 <legend>部屋追加</legend>
-                <input name=name required placeholder="部屋名" >
-                URL: <code>http://{{ server.HTTP_HOST }}/rooms/<input name=slug required placeholder="slug" pattern="[a-zA-Z0-9]+"></code>
-                <input name=user_id value="{{ loginUser.id }}" type=hidden>
-                <button type=submit>追加</button>
+                <input name="name" required placeholder="部屋名" >
+                URL: <code>http://{{ server.HTTP_HOST }}/rooms/<input name="slug" required placeholder="slug" pattern="[a-zA-Z0-9]+"></code>
+                <input name="user_id" value="{{ loginUser.id }}" type="hidden">
+                <button type="submit">追加</button>
             </fieldset>
         </form>
     {% else %}
         <form action="/login" class="loginform">
             <fieldset>
                 <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
-                <button type=submit>Login</button>
+                <input name="user" value="{{ user }}" type="text">
+                <input name="password" type="password">
+                <button type="submit">Login</button>
             </fieldset>
         </form>
     {% endif %}
