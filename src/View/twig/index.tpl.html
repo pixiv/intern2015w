@@ -12,7 +12,7 @@
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
+        <form action="/login" class="loginform" method="post">
             <fieldset>
                 <legend>Login</legend>
                 <input name="user" value="{{ user }}" type="text" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
