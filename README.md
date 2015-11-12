@@ -49,8 +49,8 @@ Debian GNU/Linux + PHP 7の環境を利用してください。
 ## セットアップ
 
 ```sh
-git clone # リポジトリのURL
-cd wintern
+git clone git@github.com:pixiv/intern2015w.git
+cd intern2015w
 vagrant up # 初回はBoxのダウンロードが必要なのでインターネット接続が必要なのと時間がかかります
 vagrant ssh # sshで仮想マシンの中に入れます
 
