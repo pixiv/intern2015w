@@ -18,8 +18,12 @@ final class user
         $stmt->execute([$name]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        return new TemplateResponse('user.tpl.html', [
-            'user' => $user,
-        ]);
+        if($user) {
+            return new TemplateResponse('user.tpl.html', [
+                'user' => $user,
+            ]);
+        } else {
+            return new TemplateResponse('404.tpl.html', [], 404);
+        }
     }
 }
