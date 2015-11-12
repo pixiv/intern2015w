@@ -7,7 +7,7 @@
     {% if is_duplicated == true %}
         <p>すでに登録されたログインIDです。</p>
     {% endif %}
-    <form action="/register" class="loginform">
+    <form action="/register" class="loginform" method="post">
         <fieldset>
             <legend>Register</legend>
             <input name=user value="{{ user }}" required placeholder="ユーザー名" >

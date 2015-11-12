@@ -16,7 +16,7 @@ call_user_func(function(){
     $routing_map = [
         'logout'   => ['GET',  '/logout',      'logout'],
         'login'    => ['GET',  '/login',       'login'],
-                      ['GET',  '/login',       'login'],
+                      ['POST', '/login',       'login'],
         'register' => ['GET',  '/register',    'register'],
                       ['POST', '/register',    'register'],
         'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
