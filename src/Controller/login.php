@@ -18,7 +18,7 @@ final class login
         }
 
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
+        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system' && $app->validateToken($_REQUEST['csrf_token'] ?? '')) {
             $user = trim($_REQUEST['user']);
             $pass = $_REQUEST['password'];
             $query

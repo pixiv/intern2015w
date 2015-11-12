@@ -14,7 +14,7 @@ class register
         $is_valid = self::isValid($_REQUEST['slug'] ?? '');
         $is_duplicated = self::isDuplicated($_REQUEST['slug'] ?? '');
 
-        if ($is_valid && !$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['password'])) {
+        if ($is_valid && !$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['password'])  && $app->validateToken($_REQUEST['csrf_token'] ?? '')) {
             $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);

@@ -9,6 +9,7 @@ error_reporting(-1);
 try {
 call_user_func(function(){
     mb_internal_encoding("UTF-8");
+
     $dotenv = new \Dotenv\Dotenv(dirname(__DIR__));
     $dotenv->overload();
     $dotenv->required('DB_DSN')->notEmpty();
@@ -47,6 +48,9 @@ call_user_func(function(){
     $session = new \Baguette\Session\PhpSession;
     $app->setSession($session);
     $session->start();
+
+    $manager = new \Symfony\Component\Security\Csrf\CsrfTokenManager();
+    $app->setCsrfManager($manager);
 
     $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : $_SERVER['PHP_SELF'];
     $path = ($path === '/index.php') ? '/' : $path;

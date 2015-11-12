@@ -17,6 +17,7 @@ final class add_room
 
         if (!$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['name'])
             && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+            && $app->validateToken($_REQUEST['csrf_token'] ?? '')
         ) {
             return new RedirectResponse('/rooms/' . $_REQUEST['slug']);
         }
