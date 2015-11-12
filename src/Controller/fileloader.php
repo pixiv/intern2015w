@@ -17,7 +17,10 @@ final class fileloader
         $ext  = pathinfo($filename, PATHINFO_EXTENSION);
         $path = dirname(dirname(__DIR__)) . "/htdocs{$filename}";
 
-        if (!file_exists($path)) {
+        if (!file_exists($path)
+            || strpos($filename, '..')
+            || preg_match('/\A[a-z0-9]+\z/ui', $filename)
+            ) {
             return new TemplateResponse('404.tpl.html', [], 404);
         }
 
