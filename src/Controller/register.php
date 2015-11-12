@@ -38,6 +38,10 @@ class register
             return false;
         }
 
+        if (!preg_match('/^[a-zA-Z0-9]*$/', $user_name)) {
+            return false;
+        }
+
         return true;
     }
 

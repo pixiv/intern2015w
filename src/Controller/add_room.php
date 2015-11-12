@@ -13,9 +13,10 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
+        $is_valid = self::isValid($_REQUEST['slug'] ?? '');
         $is_duplicated = self::isDuplicated($_REQUEST['slug'] ?? '');
 
-        if (!$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['name'])
+        if ($is_valid && !$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['name'])
             && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
             && $app->validateToken($_REQUEST['csrf_token'] ?? '')
         ) {
@@ -23,6 +24,16 @@ final class add_room
         }
 
         return new RedirectResponse('/');
+    }
+
+    private static function isValid(string $slug): bool
+    {
+
+        if (!preg_match('/^[a-zA-Z0-9]+$/', $slug)) {
+            return false;
+        }
+
+        return true;
     }
 
     private static function isDuplicated(string $slug): bool
