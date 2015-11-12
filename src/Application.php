@@ -22,6 +22,8 @@ final class Application extends \Baguette\Application
     /** @var \Baguette\Session\SessionInterface */
     private $session;
 
+    public $logger;
+
     /**
      * @param  \Teto\Routing\Action $action
      * @return \Baguette\Response\ResponseInterface
@@ -38,6 +40,12 @@ final class Application extends \Baguette\Application
         }
 
         return $response;
+    }
+
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+        $this->logger->info('start logger');
     }
 
     public function setSession(\Baguette\Session\SessionInterface $session)

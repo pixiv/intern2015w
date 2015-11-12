@@ -29,6 +29,11 @@ call_user_func(function(){
 
     $now = new \DateTimeImmutable;
     $app = new Application($_SERVER, $_COOKIE, $_GET, $_POST, $now);
+    if (getenv('DEBUG')) {
+        $logger = new \Monolog\Logger('http-server');
+        $app->setLogger($logger);
+        $app->logger->info($_SERVER['REQUEST_METHOD'] . " " . ($_SERVER['REQUEST_URI']));
+    }
 
     $basedir = dirname(__DIR__);
     $twig_option = [
