@@ -4,7 +4,12 @@ use Nyaan\Application;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-error_reporting(-1);
+if (getenv('DEBUG')) {
+    error_reporting(-1);
+} else {
+    error_reporting(0);
+}
+
 
 try {
 call_user_func(function(){
