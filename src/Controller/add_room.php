@@ -15,7 +15,7 @@ final class add_room
         $is_daburi = self::isTyouhuku(isset($_REQUEST['slug']) ?? '');
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+            && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
             return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
         }
@@ -33,7 +33,7 @@ final class add_room
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $user): bool
+    private static function register($slug, $name, $user): bool
     {
         $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( ?, ? ); ";
         $stmt = db()->prepare($query);
