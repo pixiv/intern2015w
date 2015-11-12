@@ -1,6 +1,12 @@
 {% extends "layout.tpl.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
+    {% if is_valid == false %}
+        <p>ログインIDが使用できないものです。</p>
+    {% endif %}
+    {% if is_duplicated == true %}
+        <p>すでに登録されたログインIDです。</p>
+    {% endif %}
     <form action="/register" class="loginform">
         <fieldset>
             <legend>Register</legend>
