@@ -1,6 +1,7 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
+use Baguette\Response\RedirectResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -17,10 +18,10 @@ final class add_room
         if (!$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['name'])
             && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
-            return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
+            return new RedirectResponse('/rooms/' . $_REQUEST['slug']);
         }
 
-        return new Response\RedirectResponse('/');
+        return new RedirectResponse('/');
     }
 
     private static function isDuplicated(string $slug): bool

@@ -1,13 +1,14 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
+use Baguette\Response\RedirectResponse;
 
 class register
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         if ($app->session->get('user_id', ['default' => false])) {
-            return new Response\RedirectResponse('/');
+            return new RedirectResponse('/');
         }
 
         $is_valid = self::isValid($_REQUEST['slug'] ?? '');
@@ -19,10 +20,10 @@ class register
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
 
-            return new Response\RedirectResponse('/');
+            return new RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('register.tpl.html', [
+        return new TemplateResponse('register.tpl.html', [
             'user' => $_REQUEST['user'] ?? null,
             'slug' => $_REQUEST['slug'] ?? null,
             'is_valid' => $is_valid,

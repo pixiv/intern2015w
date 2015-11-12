@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Nyaan\Response;
+use Nyaan\Response\TemplateResponse;
 use Baguette\HTTP\ContentType;
 
 /**
@@ -18,7 +18,7 @@ final class fileloader
         $path = dirname(dirname(__DIR__)) . "/htdocs{$filename}";
 
         if (!file_exists($path)) {
-            return new Response\TemplateResponse('404.tpl.html', [], 404);
+            return new TemplateResponse('404.tpl.html', [], 404);
         }
 
         $mime_types = [

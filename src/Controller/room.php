@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Nyaan\Response;
+use Nyaan\Response\TemplateResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -19,7 +19,7 @@ final class room
         $stmt->execute([$room]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!empty($_REQUEST['message'])) {
+        if (!empty($_REQUEST['message']) && $app->validateToken($_REQUEST['csrf_token'] ?? '')) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = $_REQUEST['message'];
             $user_id = $_REQUEST['user_id'];
@@ -44,7 +44,7 @@ final class room
             }
         }
 
-        return new Response\TemplateResponse('room.tpl.html', [
+        return new TemplateResponse('room.tpl.html', [
             'slug' => $room,
             'room' => $data,
             'talk' => $talk,

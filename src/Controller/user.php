@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Nyaan\Response;
+use Nyaan\Response\TemplateResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -18,7 +18,7 @@ final class user
         $stmt->execute([$name]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        return new Response\TemplateResponse('user.tpl.html', [
+        return new TemplateResponse('user.tpl.html', [
             'user' => $user,
         ]);
     }

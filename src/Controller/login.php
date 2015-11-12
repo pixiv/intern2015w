@@ -1,6 +1,7 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
+use Baguette\Response\RedirectResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -13,7 +14,7 @@ final class login
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         if ($app->session->get('user_id', ['default' => false])) {
-            return new Response\RedirectResponse('/');
+            return new RedirectResponse('/');
         }
 
         // systemは特殊なユーザーなのでログインできない
@@ -34,11 +35,11 @@ final class login
                 $app->session->set('user_id', $login['id']);
                 $app->session->set('user_slug', $login['slug']);
                 $app->session->set('user_name', $login['name']);
-                return new Response\RedirectResponse('/');
+                return new RedirectResponse('/');
             }
         }
 
-        return new Response\TwigResponse('login.tpl.html', [
+        return new TemplateResponse('login.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
         ]);
     }
