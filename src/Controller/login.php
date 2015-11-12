@@ -20,22 +20,22 @@ final class login
         // systemは特殊なユーザーなのでログインできない
         if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system' && $app->validateToken($_REQUEST['csrf_token'] ?? '')) {
             $user = trim($_REQUEST['user']);
-            $pass = $_REQUEST['password'];
             $query
-                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
+                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` , `user_passwords`.`password` '
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = ? "
-                . "  AND `user_passwords`.`password` = ? ";
+                . "WHERE `users`.`slug` = ? ";
             $stmt = db()->prepare($query);
-            $stmt->execute([$user, $pass]);
+            $stmt->execute([$user]);
 
-            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $app->session->set('user_id', $login['id']);
-                $app->session->set('user_slug', $login['slug']);
-                $app->session->set('user_name', $login['name']);
-                return new RedirectResponse('/');
+            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC) ) {
+                if(password_verify($_REQUEST['password'], $login['password'])) {
+                    $app->session->set('user_id', $login['id']);
+                    $app->session->set('user_slug', $login['slug']);
+                    $app->session->set('user_name', $login['name']);
+                    return new RedirectResponse('/');
+                }
             }
         }
 

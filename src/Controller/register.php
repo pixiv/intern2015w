@@ -58,9 +58,10 @@ class register
         $stmt->execute([$slug, $name]);
 
         $id = db()->lastInsertId();
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $query = "INSERT INTO `user_passwords` VALUES( ?, ? ); ";
         $stmt = db()->prepare($query);
-        $stmt->execute([$id, $password]);
+        $stmt->execute([$id, $hashed_password]);
 
         return [
             'id' => $id,
