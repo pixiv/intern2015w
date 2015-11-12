@@ -12,9 +12,9 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['slug']) ?? '');
+        $is_duplicated = self::isDuplicated($_REQUEST['slug'] ?? '');
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
+        if (!$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['name'])
             && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
             return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
@@ -23,7 +23,7 @@ final class add_room
         return new Response\RedirectResponse('/');
     }
 
-    private static function isTyouhuku(string $slug): bool
+    private static function isDuplicated(string $slug): bool
     {
         $query = "SELECT * FROM `rooms` WHERE `slug` = ? ";
         $stmt = db()->prepare($query);
