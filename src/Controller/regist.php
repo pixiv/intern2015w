@@ -69,7 +69,7 @@ class regist
         $id = db()->lastInsertId();
         $query = 'INSERT INTO `user_passwords` VALUES(?, ?)';
         $stmt = db()->prepare($query);
-        $stmt->execute([$id, $password]);
+        $stmt->execute([$id, password($password)]);
 
         return [
             'id' => $id,
