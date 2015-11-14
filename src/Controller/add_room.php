@@ -25,9 +25,9 @@ final class add_room
 
     private static function isTyouhuku(string $slug): bool
     {
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"${slug}\" ";
+        $query = 'SELECT * FROM `rooms` WHERE `slug` = ?';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$slug]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
@@ -35,17 +35,17 @@ final class add_room
 
     private static function regist($slug, $name, $user): bool
     {
-        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = 'INSERT INTO `rooms` (`slug`, `name`) VALUES(?, ?)';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$slug, $name]);
         $id = db()->lastInsertId();
 
         $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
         $user_name = $user->name;
         $message = str_replace('"', '\\"', "**{$user_name}さん**が部屋を作りました！");
-        $query = "INSERT INTO `posts` VALUES( {$id}, 0, \"{$now}\", \"{$message}\" )";
+        $query = 'INSERT INTO `posts` VALUES(?, 0, ?, ?)';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$id, $now, $message]);
 
         return true;
     }
