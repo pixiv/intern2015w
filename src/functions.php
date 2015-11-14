@@ -18,3 +18,8 @@ function db()
 
     return $db;
 }
+
+function csrf_token()
+{
+	return base64_encode(openssl_random_pseudo_bytes(64));
+}

@@ -21,9 +21,13 @@ final class add_room
 		}
         $is_daburi = $slug === NULL || self::isTyouhuku($slug);
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+		$token = $app->session->get('token', ['default' => false]);
+		if (!$is_daburi
+			&& isset($_REQUEST['slug'], $_REQUEST['name'], $_REQUEST['token'])
+			&& $_REQUEST['token'] === $token
+			&& self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
+			$app->session->set('token', NULL);
             return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
         }
 

@@ -16,6 +16,12 @@ final class login
             return new Response\RedirectResponse('/');
         }
 
+		$token = $app->session->get('token', ['default' => false]);
+        if (!isset($_REQUEST['token']) || $_REQUEST['token'] !== $token) {
+            return new Response\RedirectResponse('/');
+        }
+		$app->session->set('token', NULL);
+
         // systemは特殊なユーザーなのでログインできない
         if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
             $user = trim($_REQUEST['user']);
@@ -38,8 +44,12 @@ final class login
             }
         }
 
+		$token = csrf_token();
+		$app->session->set('token', $token);
+
         return new Response\TwigResponse('login.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+			'token' => $token
         ]);
     }
 }

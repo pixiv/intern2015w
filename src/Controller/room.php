@@ -19,14 +19,17 @@ final class room
         $stmt->execute([$room]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!empty($_REQUEST['message'])) {
+		$token = $app->session->get('token', ['default' => false]);
+		if (!empty($_REQUEST['message'])
+			&& isset($_REQUEST['token']) && $_REQUEST['token'] === $token) {
+			$app->session->set('token', NULL);
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = str_replace('"', '\\"', $_REQUEST['message']);
             $user_id = $_REQUEST['user_id'];
             $query = 'INSERT INTO `posts` VALUES(?, ?, ?, ?)';
             $stmt = db()->prepare($query);
             $stmt->execute([$data['id'], $user_id, $now, $message]);
-        }
+		}
 
         $query = 'SELECT * FROM `posts` WHERE `room_id` = ? ORDER BY datetime(`posted_at`) DESC LIMIT 100';
         $stmt = db()->prepare($query);
@@ -44,11 +47,15 @@ final class room
             }
         }
 
+		$token = csrf_token();
+		$app->session->set('token', $token);
+
         return new Response\TemplateResponse('room.tpl.html', [
             'slug' => $room,
             'room' => $data,
             'talk' => $talk,
             'users' => $users,
+			'token' => $token
         ]);
     }
 }
