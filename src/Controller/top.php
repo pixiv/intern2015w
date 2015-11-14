@@ -16,12 +16,12 @@ final class top
         $stmt->execute();
         $rooms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-		$token = csrf_token();
-		$app->session->set('token', $token);
+        $token = csrf_token();
+        $app->session->set('token', $token);
 
         return new Response\TemplateResponse('index.tpl.html', [
             'rooms' => $rooms,
-			'token' => $token
+            'token' => $token
         ]);
     }
 }

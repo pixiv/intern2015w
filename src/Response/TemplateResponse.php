@@ -32,7 +32,7 @@ final class TemplateResponse extends \Baguette\Response\TwigResponse
 
     /**
      * @param  \Baguette\Application $_ is not used.
-      */
+     */
     public function getHttpStatusCode(\Baguette\Application $_): int
     {
         return $this->status_code;

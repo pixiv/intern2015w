@@ -74,11 +74,11 @@ foreach ($queries as $q) {
     fwrite(STDERR, "[SQL] {$q}\n");
     $stmt = $pdo->prepare($q);
     if ($stmt === false) {
-       fwrite(STDERR, sprintf("[Error] Query error \n"));
-       die;
+        fwrite(STDERR, sprintf("[Error] Query error \n"));
+        die;
     }
     if (!$stmt->execute()) {
-       fwrite(STDERR, sprintf("[Error] %s\n", print_r($stmt->errorInfo(), true)));
-       die;
+        fwrite(STDERR, sprintf("[Error] %s\n", print_r($stmt->errorInfo(), true)));
+        die;
     }
 }

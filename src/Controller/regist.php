@@ -11,35 +11,35 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-		$slug = NULL;
-		if (isset($_REQUEST['slug'])) {
-			preg_match('/[-a-zA-Z0-9]+/', $_REQUEST['slug'], $matches);
-			if (count($matches) > 0) {
-				$slug = $matches[0];
-			}
-		}
-		$is_daburi = $slug === NULL || self::isTyouhuku($slug);
+        $slug = NULL;
+        if (isset($_REQUEST['slug'])) {
+            preg_match('/[-a-zA-Z0-9]+/', $_REQUEST['slug'], $matches);
+            if (count($matches) > 0) {
+                $slug = $matches[0];
+            }
+        }
+        $is_daburi = $slug === NULL || self::isTyouhuku($slug);
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-			$token = $app->session->get('token', ['default' => false]);
-			if (isset($_REQUEST['token']) && $_REQUEST['token'] === $token) {
-				$app->session->set('token', NULL);
-	            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
-    	        $app->session->set('user_id', $login['id']);
-        	    $app->session->set('user_slug', $login['slug']);
-            	$app->session->set('user_name', $login['name']);
+            $token = $app->session->get('token', ['default' => false]);
+            if (isset($_REQUEST['token']) && $_REQUEST['token'] === $token) {
+                $app->session->set('token', NULL);
+                $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+                $app->session->set('user_id', $login['id']);
+                $app->session->set('user_slug', $login['slug']);
+                $app->session->set('user_name', $login['name']);
 
-				return new Response\RedirectResponse('/');
-			}
+                return new Response\RedirectResponse('/');
+            }
         }
 
-		$token = csrf_token();
-		$app->session->set('token', $token);
+        $token = csrf_token();
+        $app->session->set('token', $token);
 
         return new Response\TwigResponse('regist.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
-			'token' => $token
+            'token' => $token
         ]);
     }
 

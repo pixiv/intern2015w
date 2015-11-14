@@ -14,11 +14,11 @@ final class Markdown extends \Parsedown
         $this->setMarkupEscaped(true);
     }
 
-	// XSS対策
-	protected function inlineLink($Excerpt)
+    // XSS対策
+    protected function inlineLink($Excerpt)
     {
         $res = parent::inlineLink($Excerpt);
-		$href = $res['element']['attributes']['href'];
+        $href = $res['element']['attributes']['href'];
         if (isset($href)) {
             if (preg_match('/^javascript\:/i', $href)) {
                 $res['element']['attributes']['href'] = NULL;
