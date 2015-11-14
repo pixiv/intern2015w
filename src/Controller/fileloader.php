@@ -13,7 +13,7 @@ final class fileloader
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $filename = isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SERVER['PHP_SELF'];
+        $filename = $_SERVER['PHP_SELF'];
         $ext  = pathinfo($filename, PATHINFO_EXTENSION);
         $path = dirname(dirname(__DIR__)) . "/htdocs{$filename}";
 
