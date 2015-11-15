@@ -9,3 +9,7 @@
 /.idea
 /*.iml
 /.vagrant
+
+GPATH
+GRTAGS
+GTAGS

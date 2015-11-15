@@ -2,8 +2,7 @@
 namespace Nyaan\Controller;
 use Baguette\Response;
 
-// FIXME: そんな英語はない
-class regist
+class register
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
@@ -14,7 +13,7 @@ class regist
         $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+            $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -22,7 +21,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('regist.tpl.html', [
+        return new Response\TwigResponse('register.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
         ]);
@@ -45,7 +44,7 @@ class regist
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $password): array
+    private static function register($slug, $name, $password): array
     {
         $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
         $stmt = db()->prepare($query);
