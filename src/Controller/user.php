@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -22,9 +22,6 @@ final class user
             return new Response\RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('user.tpl.html', [
-            'user' => $user,
-        ]);
         return new Response\TemplateResponse('user.tpl.html', [
             'user' => $user,
         ]);

@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -14,6 +14,6 @@ final class logout
     {
         $app->session->destroy();
 
-        return new Response\TwigResponse('logout.tpl.html');
+        return new Response\TemplateResponse('logout.tpl.html');
     }
 }

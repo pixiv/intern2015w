@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response;
 
 // FIXME: そんな英語はない
 class register
@@ -36,7 +36,7 @@ class register
         $token = csrf_token();
         $app->session->set('token', $token);
 
-        return new Response\TwigResponse('register.tpl.html', [
+        return new Response\TemplateResponse('register.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
             'token' => $token

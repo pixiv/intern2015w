@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan;
-use Baguette\Response;
+use Nyaan\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -12,6 +12,6 @@ final class room_list
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        return new Response\TwigResponse('room_list.tpl.html');
+        return new Response\TemplateResponse('room_list.tpl.html');
     }
 }

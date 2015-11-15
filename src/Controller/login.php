@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -47,7 +47,7 @@ final class login
         $token = csrf_token();
         $app->session->set('token', $token);
 
-        return new Response\TwigResponse('login.tpl.html', [
+        return new Response\TemplateResponse('login.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'token' => $token
         ]);
