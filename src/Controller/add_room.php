@@ -25,7 +25,7 @@ final class add_room
         if (!$is_daburi
             && isset($_REQUEST['slug'], $_REQUEST['name'], $_REQUEST['token'])
             && $_REQUEST['token'] === $token
-            && self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+            && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
             $app->session->set('token', NULL);
             return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
@@ -44,7 +44,7 @@ final class add_room
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $user): bool
+    private static function register($slug, $name, $user): bool
     {
         $query = 'INSERT INTO `rooms` (`slug`, `name`) VALUES(?, ?)';
         $stmt = db()->prepare($query);
