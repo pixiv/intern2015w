@@ -17,9 +17,9 @@ final class login
         }
 
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
-            $user = trim($_REQUEST['user']);
-            $pass = $_REQUEST['password'];
+        if (isset($_POST['user'], $_POST['password']) && $_POST['user'] != 'system') {
+            $user = trim($_POST['user']);
+            $pass = $_POST['password'];
             $query
                 = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
                 . 'FROM `users` '
@@ -39,7 +39,7 @@ final class login
         }
 
         return new Response\TwigResponse('login.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+            'user' => isset($_POST['user']) ? $_POST['user'] : null,
         ]);
     }
 }

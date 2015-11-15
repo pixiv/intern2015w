@@ -12,7 +12,7 @@
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
+        <form action="/login" method=post class="loginform">
             <fieldset>
                 <legend>Login</legend>
                 <input name=user value="{{ user }}" >
