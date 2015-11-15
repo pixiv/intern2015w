@@ -25,21 +25,23 @@ final class login
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = \"${user}\" "
-                . "  AND `user_passwords`.`password` = \"${pass}\" ";
-            $stmt = db()->prepare($query);
-            $stmt->execute();
+                . "WHERE `users`.`slug` = ? "
+                . "  AND `user_passwords`.`password` = ? ";
+            $stmt = db()->prepare($query, array('text'));
+            $data = array($user, $pass);
+            $stmt->execute($data);
 
-            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $login = $stmt->fetch(\PDO::FETCH_ASSOC);
+            if ($login) {
                 $app->session->set('user_id', $login['id']);
                 $app->session->set('user_slug', $login['slug']);
                 $app->session->set('user_name', $login['name']);
                 return new Response\RedirectResponse('/');
             }
         }
-
         return new Response\TwigResponse('login.tpl.html', [
             'user' => isset($_POST['user']) ? $_POST['user'] : null,
+            'isLoginSuccess' => $login,
         ]);
     }
 }

@@ -1,7 +1,7 @@
 {% extends "layout.tpl.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <form action="/login" class="loginform" method="POST">
+    <form action="/login" method=post class="loginform">
         <fieldset>
             <legend>Login</legend>
             <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
@@ -9,4 +9,7 @@
             <button type=submit>Login</button>
         </fieldset>
     </form>
+    {% if isLoginSuccess == false %}
+        <p>ログインに失敗しました.ユーザー名, またはパスワードが正しくありません.</p>
+    {% endif %}
 {% endblock %}
