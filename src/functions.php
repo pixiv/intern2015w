@@ -24,7 +24,7 @@ function csrf_token()
     return base64_encode(openssl_random_pseudo_bytes(64));
 }
 
-function password($passwd, $hash)
+function password($passwd, $hash = NULL)
 {
     if (isset($passwd, $hash)) {
         return password_verify($passwd, $hash);
