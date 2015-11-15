@@ -17,7 +17,8 @@ final class Markdown
     {
         return preg_replace(
             '@</p>$@', '',
-            preg_replace('@^<p>@', '', (new \Parsedown)->text($input))
+            preg_replace('@^<p>@', '', (new \Parsedown)->text(
+                htmlspecialcharacters($input, ENT_QUOTES, 'UTF-8')))
         );
     }
 }
