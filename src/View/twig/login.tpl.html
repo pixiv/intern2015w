@@ -1,7 +1,7 @@
 {% extends "layout.tpl.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <form action="/login" class="loginform">
+    <form action="/login" method="POST" class="loginform">
         <fieldset>
             <legend>Login</legend>
             <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[-a-zA-Z0-9]+">
