@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Nyaan\Response;
+use Baguette\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -18,6 +18,13 @@ final class user
         $stmt->execute([$name]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+        if ($user === false) {
+            return new Response\RedirectResponse('/');
+        }
+
+        return new Response\TwigResponse('user.tpl.html', [
+            'user' => $user,
+        ]);
         return new Response\TemplateResponse('user.tpl.html', [
             'user' => $user,
         ]);
