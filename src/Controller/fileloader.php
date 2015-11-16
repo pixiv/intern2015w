@@ -26,9 +26,17 @@ final class fileloader
             'jpg' => ContentType::Image_JPEG,
             'txt' => ContentType::Text_Plain,
         ];
+        $lastmod = gmdate('D, d M Y H:i:s T', filemtime($path));
+        $etag = md5($lastmod);
         header('Content-Type: '.$mime_types[$ext]);
         header('Expires: '. date(\DateTime::RFC1123, time() + 3600));
         header('Cache-Control: max-age=3600');
+        header("Last-Modified: $lastmod");
+        header("Etag: $etag");
+        if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $etag) {
+            header('HTTP', true, 304);
+            exit;
+        }
         readfile($path);
         exit;
     }
