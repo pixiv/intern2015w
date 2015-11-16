@@ -36,7 +36,6 @@ class regist
         }
 
         $user = trim($user_name);
-        $pass = $_REQUEST['password'];
         $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
         $stmt = db()->prepare($query);
         $stmt->execute();
@@ -45,13 +44,14 @@ class regist
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $password): array
+    private static function regist($slug, $name, $plain_password): array
     {
         $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
         $stmt = db()->prepare($query);
         $stmt->execute();
-
+        
         $id = db()->lastInsertId();
+        $password = password_hash($plain_password, PASSWORD_DEFAULT);
         $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
         $stmt = db()->prepare($query);
         $stmt->execute();
