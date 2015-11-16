@@ -10,22 +10,22 @@ class regist
         if ($app->session->get('user_id', ['default' => false])) {
             return new Response\RedirectResponse('/');
         }
-
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
-
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
+        if(isset($_REQUEST['slug'],$_REQUEST['user'],$_REQUEST['password'])){
+            $is_daburi = self::isTyouhuku($_REQUEST['slug']);
+        }
+        if (isset($is_daburi) && $is_daburi){
+            return new Response\TwigResponse('regist.tpl.html', [
+                'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+                'is_daburi' => $is_daburi,
+            ]);
+        }
+        else{
             $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
-
             return new Response\RedirectResponse('/');
         }
-
-        return new Response\TwigResponse('regist.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
-            'is_daburi' => $is_daburi,
-        ]);
     }
 
     private static function isTyouhuku(string $user_name): bool
