@@ -13,15 +13,7 @@
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" method="POST" class="loginform">
-            <fieldset>
-                <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
-                <input name="token" value="{{ token }}" type="hidden">
-                <button type=submit>Login</button>
-            </fieldset>
-        </form>
+		{% include "loginform.tpl.html" %}
     {% endif %}
     <h2>部屋一覧</h2>
     <ul>
