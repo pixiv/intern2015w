@@ -20,15 +20,11 @@ final class room
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         $token = $app->session->get('token', ['default' => false]);
-        if (!empty($_REQUEST['message'])
-            && isset($_REQUEST['token']) && $_REQUEST['token'] === $token) {
+        if (!empty($_POST['message'])
+            && isset($_POST['token']) && $_POST['token'] === $token) {
             $app->session->set('token', NULL);
-            $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-            $message = str_replace('"', '\\"', $_REQUEST['message']);
-            $user_id = $_REQUEST['user_id'];
-            $query = 'INSERT INTO `posts` VALUES(?, ?, ?, ?)';
-            $stmt = db()->prepare($query);
-            $stmt->execute([$data['id'], $user_id, $now, $message]);
+            $this->post($data['id'], $_POST['user_id'], $_POST['message']);
+            return new Response\RedirectResponse("/rooms/$room");
         }
 
         $query = 'SELECT * FROM `posts` WHERE `room_id` = ? ORDER BY datetime(`posted_at`) DESC LIMIT 100';
@@ -57,5 +53,13 @@ final class room
             'users' => $users,
             'token' => $token
         ]);
+    }
+
+
+    private function post($id, $user, $message) {
+        $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
+        $query = 'INSERT INTO `posts` VALUES(?, ?, ?, ?)';
+        $stmt = db()->prepare($query);
+        $stmt->execute([$id, $user, $now, $message]);
     }
 }
