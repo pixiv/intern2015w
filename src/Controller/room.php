@@ -23,7 +23,7 @@ final class room
         if ($_SERVER['REQUEST_METHOD'] === 'POST'
             && isset($_POST['token']) && $_POST['token'] === $token) {
             $app->session->set('token', NULL);
-            return $this->post($room, $_POST['user_id'], $_POST['message'] ?? '');
+            return $this->post($room, $app->session->get('user_id'), $_POST['message'] ?? '');
         }
 
         $query = 'SELECT * FROM `posts` WHERE `room_id` = ? ORDER BY datetime(`posted_at`) DESC LIMIT 100';
