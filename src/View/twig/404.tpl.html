@@ -2,5 +2,9 @@
 {% block title %}Wintern Chat{% endblock %}
 {% block content %}
     <h1>404 Not Found</h1>
-    <p>ファイルがありません</p>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% else %}
+        <p>ファイルがありません</p>
+    {% endif %}
 {% endblock %}
