@@ -10,37 +10,35 @@ class register
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
-
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+        $is_duplicated = self::isDuplicated(isset($_POST['slug']) ? $_POST['slug'] : '');
+        if (!$is_duplicated && isset($_POST['slug'], $_POST['password'])) {
+            $login = self::register($_POST['slug'], $_POST['user'], $_POST['password']);
             $app->session->set('user_id', $login['user_id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
-
             return new Response\RedirectResponse('/');
         }
-
+        else if (!isset($_POST['slug'])) {
+            $is_duplicated = false;
+        }
         return new Response\TwigResponse('register.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
-            'is_daburi' => $is_daburi,
+            'user' => isset($_POST['user']) ? $_POST['user'] : null,
+            'is_duplicated' => $is_duplicated,
         ]);
     }
 
-    private static function isTyouhuku(string $user_name): bool
+    private static function isDuplicated(string $user_name): bool
     {
         // systemは特殊なユーザーなので登録できない
         if (empty($user_name) || $user_name === 'system') {
-            return false;
+            return true;
         }
 
         $user = trim($user_name);
-        $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
-        $stmt = db()->prepare($query);
-        $stmt->execute();
+        $query = "SELECT * FROM `users` WHERE `slug` = ?";
+        $stmt = db()->prepare($query, array('text'));
+        $stmt->execute(array($user));
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
-
         return !empty($data);
     }
 

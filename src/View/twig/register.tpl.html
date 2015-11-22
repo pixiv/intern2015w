@@ -1,7 +1,7 @@
 {% extends "layout.tpl.html" %}
-{% block title %}Regist{% endblock %}
+{% block title %}Register{% endblock %}
 {% block content %}
-    <form action="/register" class="loginform">
+    <form action="/register" method=post class="loginform">
         <fieldset>
             <legend>Register</legend>
             <input name=user value="{{ user }}" required placeholder="ユーザー名" >
@@ -10,4 +10,7 @@
             <button type=submit>Submit</button>
         </fieldset>
     </form>
+    {% if is_duplicated == true %}
+        <p>すでにユーザーが登録されています</p>
+    {% endif %}
 {% endblock %}
