@@ -14,8 +14,9 @@ final class fileloader
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         $filename = isset($_REQUEST['name']) ? $_REQUEST['name'] : $_SERVER['PHP_SELF'];
+        $filename = basename($filename);
         $ext  = pathinfo($filename, PATHINFO_EXTENSION);
-        $path = dirname(dirname(__DIR__)) . "/htdocs{$filename}";
+        $path = dirname(dirname(__DIR__)) . "/htdocs/{$filename}";
 
         if (!file_exists($path)) {
             return new Response\TemplateResponse('404.tpl.html', [], 404);
