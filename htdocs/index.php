@@ -22,7 +22,7 @@ call_user_func(function(){
         'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
                       ['POST', '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
         'add_romm' => ['POST', '/add_room',    'add_room'],
-        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[-a-zA-Z]+/']],
+        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[-a-zA-Z0-9]+/']],
         'index'    => ['GET',  '/',            'top'],
         '#404'     =>                          'fileloader',
     ];
