@@ -15,33 +15,35 @@ final class login
         if ($app->session->get('user_id', ['default' => false])) {
             return new Response\RedirectResponse('/');
         }
-
         // systemは特殊なユーザーなのでログインできない
         if (isset($_POST['user'], $_POST['password']) && $_POST['user'] != 'system') {
             $user = trim($_POST['user']);
             $pass = $_POST['password'];
             $query
-                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
+                = 'SELECT `users`.`user_id`, `users`.`slug`, `users`.`name`, `user_hash_passwords`.`hash_password` '
                 . 'FROM `users` '
-                . 'INNER JOIN `user_passwords` '
-                . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = ? "
-                . "  AND `user_passwords`.`password` = ? ";
+                . 'INNER JOIN `user_hash_passwords` '
+                . '   ON `users`.`user_id` = `user_hash_passwords`.`user_id` '
+                . 'WHERE `users`.`slug` = ?';
             $stmt = db()->prepare($query, array('text'));
-            $data = array($user, $pass);
+            $data = array($user);
             $stmt->execute($data);
 
             $login = $stmt->fetch(\PDO::FETCH_ASSOC);
             if ($login) {
-                $app->session->set('user_id', $login['id']);
-                $app->session->set('user_slug', $login['slug']);
-                $app->session->set('user_name', $login['name']);
-                return new Response\RedirectResponse('/');
+                if (password_verify($pass, $login['hash_password'])) {
+                    $app->session->set('user_id', $login['user_id']);
+                    $app->session->set('user_slug', $login['slug']);
+                    $app->session->set('user_name', $login['name']);
+                    return new Response\RedirectResponse('/');
+                }
             }
+        } else {
+            $login = true;
         }
         return new Response\TwigResponse('login.tpl.html', [
             'user' => isset($_POST['user']) ? $_POST['user'] : null,
-            'isLoginSuccess' => $login,
+            'isLoginSuccess' => $login
         ]);
     }
 }

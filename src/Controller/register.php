@@ -14,7 +14,7 @@ class register
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
             $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
-            $app->session->set('user_id', $login['id']);
+            $app->session->set('user_id', $login['user_id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
 
@@ -46,19 +46,20 @@ class register
 
     private static function register($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
-        $stmt = db()->prepare($query);
-        $stmt->execute();
+        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( ?, ? )";
+        $stmt = db()->prepare($query, array('text'));
+        $stmt->execute(array($slug, $name));
 
-        $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
-        $stmt = db()->prepare($query);
-        $stmt->execute();
+        $user_id = db()->lastInsertId();
+        $query = "INSERT INTO `user_hash_passwords` VALUES( ?, ? )";
+        $hash_password = password_hash($password, PASSWORD_BCRYPT);
+        $stmt = db()->prepare($query, array('text'));
+        $stmt->execute(array($user_id, $hash_password));
 
         return [
-            'id' => $id,
-            'name' => $name,
-            'slug' => $slug,
+            'user_id' => $user_id,
+            'name'    => $name,
+            'slug'    => $slug,
         ];
     }
 }
