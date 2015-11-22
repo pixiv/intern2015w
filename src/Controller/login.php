@@ -39,7 +39,7 @@ final class login
                 }
             }
         } else {
-            $login = true;
+            $login = false;
         }
         return new Response\TwigResponse('login.tpl.html', [
             'user' => isset($_POST['user']) ? $_POST['user'] : null,
