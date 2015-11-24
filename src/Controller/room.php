@@ -57,10 +57,9 @@ final class room
 
     private function post($room, $user, $message) {
         if ($message !== '') {
-            $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-            $query = 'INSERT INTO `posts` VALUES((SELECT `id` FROM `rooms` WHERE `slug` = ?), ?, ?, ?)';
+            $query = 'INSERT INTO `posts` (`room_id`, `user_id`, `message`) VALUES((SELECT `id` FROM `rooms` WHERE `slug` = ?), ?, ?)';
             $stmt = db()->prepare($query);
-            $stmt->execute([$room, $user, $now, $message]);
+            $stmt->execute([$room, $user, $message]);
         }
         return new Response\RedirectResponse("/rooms/$room");
     }

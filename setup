@@ -46,7 +46,7 @@ $queries = [
     'CREATE TABLE `rooms`( `id` INTEGER PRIMARY KEY, `slug` TEXT UNIQUE, `name` TEXT )',
     'CREATE TABLE `room_owners`( `user_id` INTEGER, `room_id` INTEGER )',
     'CREATE UNIQUE INDEX `room_owners_user_room` ON `room_owners`( `user_id`, `room_id` )',
-    'CREATE TABLE `posts`( `room_id` INTEGER, `user_id` INTEGER, `posted_at` TEXT, `message` TEXT ) ',
+    "CREATE TABLE `posts`( `room_id` INTEGER, `user_id` INTEGER, `posted_at` TEXT DEFAULT (datetime('now', 'localtime')), `message` TEXT )",
     'CREATE INDEX `post_user` ON `posts`( `user_id` )',
     'CREATE INDEX `post_room` ON `posts`( `room_id` )',
     'CREATE TABLE `mentions`( `to_user_id` INTEGER, `post_id` INTEGER )',

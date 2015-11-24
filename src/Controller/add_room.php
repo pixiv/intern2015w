@@ -51,12 +51,11 @@ final class add_room
         $stmt->execute([$slug, $name]);
         $id = db()->lastInsertId();
 
-        $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
         $user_name = $user->name;
-        $message = str_replace('"', '\\"', "**{$user_name}さん**が部屋を作りました！");
-        $query = 'INSERT INTO `posts` VALUES(?, 0, ?, ?)';
+        $message = "**{$user_name}さん**が部屋を作りました！";
+        $query = 'INSERT INTO `posts` (`room_id`, `user_id`, `message`) VALUES(?, 0, ?)';
         $stmt = db()->prepare($query);
-        $stmt->execute([$id, $now, $message]);
+        $stmt->execute([$id, $message]);
 
         return true;
     }
