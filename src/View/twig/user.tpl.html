@@ -7,7 +7,31 @@
             <dt>slug</dt>
             <dd>@{{ user.slug }}</dd>
             <dt>name</dt>
-            <dd>{{  user.name }}</dd>
+            <dd>{{ user.name }}</dd>
+			<dt>website</dt>
+			<dd>
+				{% if user.website %}
+					<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>
+				{% else %}
+					N/A
+				{% endif %}
+			</dd>
+			<dt>twitter</dt>
+			<dd>
+				{% if user.twitter %}
+					<a href="https://twitter.com/{{ user.twitter }}" target="_blank">@{{ user.twitter }}</a>
+				{% else %}
+					N/A
+				{% endif %}
+			</dd>
+			<dt>blood type</dt>
+			<dd>
+				{% if user.blood_type %}
+					{{ user.blood_type }}
+				{% else %}
+					N/A
+				{% endif %}
+			</dd>
         </dl>
     </section>
 {% endblock %}
