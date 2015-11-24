@@ -34,6 +34,6 @@ final class Markdown extends \Parsedown
     public static function render($input)
     {
         $md = new Markdown();
-        return $md->text($input);
+        return preg_replace('/^<p>|<\/p>$/', '', $md->text($input));
     }
 }
