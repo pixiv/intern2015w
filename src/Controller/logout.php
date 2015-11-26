@@ -12,6 +12,9 @@ final class logout
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
+        if (!$app->isLoggedIn())
+            return new RedirectResponse('login');
+
         $app->session->destroy();
 
         return new TemplateResponse('logout.tpl.html');
