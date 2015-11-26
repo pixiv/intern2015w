@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Nyaan\Response;
+use Nyaan\Response\TemplateResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -44,7 +44,7 @@ final class room
             }
         }
 
-        return new Response\TemplateResponse('room.tpl.html', [
+        return new TemplateResponse('room.tpl.html', [
             'slug' => $room,
             'room' => $data,
             'talk' => $talk,

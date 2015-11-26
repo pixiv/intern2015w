@@ -1,6 +1,7 @@
 <?php
 namespace Nyaan\Controller;
 use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
 
 // FIXME: そんな英語はない
 class regist
@@ -22,7 +23,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('regist.tpl.html', [
+        return new TemplateResponse('regist.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
         ]);
