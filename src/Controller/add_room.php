@@ -29,12 +29,12 @@ final class add_room
      * @param ? admin_user 作成するroomのadmin
      * @return bool 成功したならtrue, 失敗したなら false
      */
-    private static function create_room(
+    private static function createRoom(
         string $room_slug,
         string $room_name,
         $user): bool
     {
-        if (!self::is_unique($room_slug))
+        if (!self::isUnique($room_slug))
             return false;
 
         $query = array(
@@ -69,7 +69,7 @@ final class add_room
         return true;
     }
 
-    private static function is_unique(string $slug): bool
+    private static function isUnique(string $slug): bool
     {
         $query = 'SELECT * FROM `rooms` WHERE `slug` = ?;';
         $stmt = db()->prepare($query);
@@ -77,22 +77,5 @@ final class add_room
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return empty($data);
-    }
-
-    private static function regist($slug, $name, $user): bool
-    {
-        $query = 'INSERT INTO `rooms`(`slug`, `name`) VALUES(?, ?);';
-        $stmt = db()->prepare($query);
-        $stmt->execute([$slug, $name]);
-        $id = db()->lastInsertId();
-
-        $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-        $user_name = $user->name;
-        $message = "**{$user_name}さん**が部屋を作りました！";
-        $query = 'INSERT INTO `posts` VALUES(?, 0, ?, ?);';
-        $stmt = db()->prepare($query);
-        $stmt->execute([$id, $now, $message]);
-
-        return true;
     }
 }
