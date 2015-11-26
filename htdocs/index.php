@@ -19,10 +19,10 @@ call_user_func(function(){
                       ['GET',  '/login',       'login'],
         'register'   => ['GET',  '/register',      'register'],
                       ['POST', '/register',      'register'],
-        'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
-                      ['POST', '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
+        'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[a-zA-Z0-9]+/']],
+                      ['POST', '/rooms/:slug', 'room', ['slug' => '/[a-zA-Z0-9]+/']],
         'add_romm' => ['POST', '/add_room',    'add_room'],
-        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[-a-zA-Z]+/']],
+        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[a-zA-Z0-9]+/']],
         'index'    => ['GET',  '/',            'top'],
         '#404'     =>                          'fileloader',
     ];
