@@ -1,5 +1,6 @@
 <?php
 namespace Nyaan;
+use Nyaan\Exception;
 
 /**
  * Nyaan Application
@@ -60,6 +61,36 @@ final class Application extends \Baguette\Application
         $user->name = $this->session->get('user_name', ['default' => 0]);
 
         return $user;
+    }
+
+    public function getAuthenticityToken(\Baguette\Session\SessionInterface $session): string
+    {
+        return $session->get('authenticity_token', ['default' => '']);
+    }
+
+    public function setAuthenticityToken(\Baguette\Session\SessionInterface $session): bool
+    {
+        $session->set('authenticity_token', random_bytes(64));
+
+        return true;
+    }
+
+    // XXX: accessing $_POST is bad idea?
+    public function verifyAuthenticityToken(): bool
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET'
+            || $_SERVER['REQUEST_METHOD'] === 'HEAD'
+        )
+            return true;
+
+        if (isset($_POST['authenticity_token'])
+            && $_POST['authenticity_token'] === $session_token
+        ) {
+            setAuthenticityToken($this->session);
+            return true;
+        } else {
+            throw new InvalidAuthenticityToken();
+        }
     }
 
     public static function getRoutingMap(): array
