@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Baguette\Response\RedirectResponse;
 use PDO;
 
 /**
@@ -14,12 +14,10 @@ final class add_room
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         if (isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::create_room($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
-        ) {
-            return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
-        }
+            && self::create_room($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser()))
+            return new RedirectResponse('/rooms/' . $_REQUEST['slug']);
 
-        return new Response\RedirectResponse('/');
+        return new RedirectResponse('/');
     }
 
     /**
