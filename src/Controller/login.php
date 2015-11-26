@@ -1,6 +1,8 @@
 <?php
 namespace Nyaan\Controller;
+use PDO;
 use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -12,23 +14,27 @@ final class login
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        if ($app->session->get('user_id', ['default' => false])) {
+        if ($app->isLoggedIn())
             return new Response\RedirectResponse('/');
-        }
 
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
-            $user = trim($_REQUEST['user']);
-            $pass = $_REQUEST['password'];
+        if (isset($_POST['user'], $_POST['password'])
+            && $app->verifyAuthenticityToken()
+            && $_POST['user'] != 'system'
+        ) {
+            $user = trim($_POST['user']);
+            $pass = $_POST['password'];
             $query
                 = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . 'WHERE `users`.`slug` = ?'
-                . '  AND `user_passwords`.`password` = ?;';
+                . 'WHERE `users`.`slug` = :user'
+                . '  AND `user_passwords`.`password` = :pass;';
             $stmt = db()->prepare($query);
-            $stmt->execute([$user, $pass]);
+            $stmt->bindValue(':user', $user, PDO::PARAM_STR);
+            $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
+            $stmt->execute();
 
             if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                 $app->session->set('user_id', $login['id']);
@@ -38,8 +44,8 @@ final class login
             }
         }
 
-        return new Response\TwigResponse('login.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+        return new TemplateResponse('login.tpl.html', [
+            'user' => isset($_POST['user']) ? $_POST['user'] : null,
         ]);
     }
 }

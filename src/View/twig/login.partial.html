@@ -1,0 +1,9 @@
+<form action="/login" class="loginform" method="post">
+    <fieldset>
+        <legend>Login</legend>
+        <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
+        <input name=password placeholder="パスワード">
+        <input type=hidden name=authenticity_token value="{{ authenticity_token }}">
+        <button type=submit>Login</button>
+    </fieldset>
+</form>

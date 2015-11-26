@@ -12,14 +12,7 @@
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
-            <fieldset>
-                <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
-                <button type=submit>Login</button>
-            </fieldset>
-        </form>
+        {% include 'login.partial.html' %}
     {% endif %}
     <h2>部屋一覧</h2>
     <ul>

@@ -1,6 +1,5 @@
 <?php
 namespace Nyaan;
-use Nyaan\Exception;
 
 /**
  * Nyaan Application
@@ -16,6 +15,9 @@ use Nyaan\Exception;
  * @property-read array $post   $_POST
  * @proprety-read \Baguette\Session\SessionInterface $session
  */
+
+final class InvalidAuthenticityToken extends \Exception {}
+
 final class Application extends \Baguette\Application
 {
     public function __get($name) { return $this->$name; }
@@ -63,16 +65,16 @@ final class Application extends \Baguette\Application
         return $user;
     }
 
-    public function getAuthenticityToken(\Baguette\Session\SessionInterface $session): string
+    public function getAuthenticityToken(): string
     {
-        return $session->get('authenticity_token', ['default' => '']);
+        return $this->session->get('authenticity_token', ['default' => 'null']);
     }
 
-    public function setAuthenticityToken(\Baguette\Session\SessionInterface $session): bool
+    public function setAuthenticityToken(): string
     {
-        $session->set('authenticity_token', random_bytes(64));
-
-        return true;
+        $token = base64_encode(random_bytes(64));
+        $this->session->set('authenticity_token', $token);
+        return $token;
     }
 
     // XXX: accessing $_POST is bad idea?
@@ -84,9 +86,9 @@ final class Application extends \Baguette\Application
             return true;
 
         if (isset($_POST['authenticity_token'])
-            && $_POST['authenticity_token'] === $session_token
+            && $_POST['authenticity_token'] === self::getAuthenticityToken()
         ) {
-            setAuthenticityToken($this->session);
+            self::setAuthenticityToken();
             return true;
         } else {
             throw new InvalidAuthenticityToken();
