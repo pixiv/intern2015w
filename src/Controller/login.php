@@ -25,9 +25,12 @@ final class login
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = \"${user}\" "
-                . "  AND `user_passwords`.`password` = \"${pass}\" ";
+                . "WHERE `users`.`slug` = ? "
+                . "  AND `user_passwords`.`password` = ? ";
+                
             $stmt = db()->prepare($query);
+            $stmt->bindParam(1, $user, \PDO::PARAM_STR);
+            $stmt->bindParam(2, $pass, \PDO::PARAM_STR);
             $stmt->execute();
 
             if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
