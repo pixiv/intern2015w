@@ -1,5 +1,6 @@
 <?php
 namespace Nyaan\Controller;
+use Baguette\Response;
 use Nyaan\Response\TemplateResponse;
 
 /**
@@ -13,7 +14,7 @@ final class logout
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         if (!$app->isLoggedIn())
-            return new RedirectResponse('login');
+            return new Response\RedirectResponse('login');
 
         $app->session->destroy();
 

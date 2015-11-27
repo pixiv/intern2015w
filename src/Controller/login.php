@@ -1,6 +1,5 @@
 <?php
 namespace Nyaan\Controller;
-use PDO;
 use Baguette\Response;
 use Nyaan\Response\TemplateResponse;
 
