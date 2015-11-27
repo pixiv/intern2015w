@@ -10,7 +10,7 @@
             <legend>Regist</legend>
             <input name=user value="{{ user|e }}" required placeholder="ユーザー名" >
             <input name=slug value="{{ slug|e }}" required placeholder="ログイン名"  pattern="[a-zA-Z0-9]+">
-            <input name=password required placeholder="パスワード">
+            <input name=password required placeholder="パスワード" type="password">
             <input type=hidden name=authenticity_token value="{{ authenticity_token }}">
             <button type=submit>Submit</button>
         </fieldset>
