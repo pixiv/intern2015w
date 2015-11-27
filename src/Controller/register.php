@@ -4,8 +4,7 @@ use PDO;
 use Baguette\Response;
 use Nyaan\Response\TemplateResponse;
 
-// FIXME: そんな英語はない
-class regist
+class register
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
@@ -23,7 +22,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        return new TemplateResponse('regist.tpl.html', [
+        return new TemplateResponse('register.tpl.html', [
             'user' => isset($app->post['user']) ? $app->post['user'] : null,
             'is_daburi' => !$is_unique,
         ]);

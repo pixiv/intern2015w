@@ -5,7 +5,7 @@
 {% if is_daburi %}
 <p>指定されたログイン名は既に取得されています。別の物を選択して下さい。</p>
 {% endif %}
-    <form action="/regist" class="loginform" method="post">
+    <form action="/register" class="loginform" method="post">
         <fieldset>
             <legend>Regist</legend>
             <input name=user value="{{ user|e }}" required placeholder="ユーザー名" >
