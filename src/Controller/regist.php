@@ -34,6 +34,9 @@ class regist
         if (!self::isUnique($slug))
             return false;
 
+        if (preg_match('/\A[a-zA-Z0-9]+\z/', $slug) !== 1)
+            return false;
+
         $query = array(
             'create_user' => 'INSERT INTO `users`(`slug`, `name`) VALUES(:slug, :name);',
             'create_pass' => 'INSERT INTO `user_passwords` VALUES(:uid, :pass);'

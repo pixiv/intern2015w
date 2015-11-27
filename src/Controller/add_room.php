@@ -40,6 +40,9 @@ final class add_room
         if (!self::isUnique($room_slug))
             return false;
 
+        if (preg_match('/\A[a-zA-Z0-9]+\z/', $slug) !== 1)
+            return false;
+
         $query = array(
             'create_room' => 'INSERT INTO `rooms`(`slug`, `name`) VALUES(:slug, :name);',
             'system_post' => 'INSERT INTO `posts` VALUES(:id, 0, :date, :message);'
