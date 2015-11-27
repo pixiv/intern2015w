@@ -58,6 +58,6 @@ final class login
         else
             $pass_db = null;
 
-        return $pass === $pass_db;
+        return password_verify($pass, $pass_db);
     }
 }
