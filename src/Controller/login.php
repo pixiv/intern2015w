@@ -20,26 +20,13 @@ final class login
         // systemは特殊なユーザーなのでログインできない
         if (isset($_POST['user'], $_POST['password'])
             && $app->verifyAuthenticityToken()
-            && $_POST['user'] != 'system'
+            && $_POST['user'] !== 'system'
         ) {
-            $user = trim($_POST['user']);
+            $slug = trim($_POST['user']);
             $pass = $_POST['password'];
-            $query
-                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
-                . 'FROM `users` '
-                . 'INNER JOIN `user_passwords` '
-                . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . 'WHERE `users`.`slug` = :user'
-                . '  AND `user_passwords`.`password` = :pass;';
-            $stmt = db()->prepare($query);
-            $stmt->bindValue(':user', $user, PDO::PARAM_STR);
-            $stmt->bindValue(':pass', $pass, PDO::PARAM_STR);
-            $stmt->execute();
 
-            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $app->session->set('user_id', $login['id']);
-                $app->session->set('user_slug', $login['slug']);
-                $app->session->set('user_name', $login['name']);
+            if (self::verifyPassword($slug, $pass)) {
+                $app->setLoginUser($slug);
                 return new Response\RedirectResponse('/');
             }
         }
@@ -47,5 +34,30 @@ final class login
         return new TemplateResponse('login.tpl.html', [
             'user' => isset($_POST['user']) ? $_POST['user'] : null,
         ]);
+    }
+
+    private static function verifyPassword(string $slug, string $pass)
+    {
+        $query = 'SELECT `users`.`id` FROM `users` WHERE `users`.`slug` = :slug;';
+        $stmt = db()->prepare($query);
+        $stmt->bindValue(':slug', $slug, \PDO::PARAM_STR);
+        $stmt->execute();
+
+        if ($input = $stmt->fetch(\PDO::FETCH_ASSOC))
+            $uid = $input['id'];
+        else
+            $uid = 0;
+
+        $query = 'SELECT `password` FROM `user_passwords` WHERE `user_id` = :uid;';
+        $stmt = db()->prepare($query);
+        $stmt->bindValue(':uid', $uid, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        if ($input = $stmt->fetch(\PDO::FETCH_ASSOC))
+            $pass_db = $input['password'];
+        else
+            $pass_db = null;
+
+        return $pass === $pass_db;
     }
 }

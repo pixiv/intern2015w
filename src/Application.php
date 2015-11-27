@@ -53,6 +53,23 @@ final class Application extends \Baguette\Application
         return $this->session->get('user_id', ['default' => 0]) > 0;
     }
 
+    public function setLoginUser(string $user_slug): bool
+    {
+        $query = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
+                 . 'FROM `users` WHERE `users`.`slug` = ?';
+        $stmt = db()->prepare($query);
+        $stmt->execute([$user_slug]);
+
+        if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $this->session->set('user_id', $login['id']);
+            $this->session->set('user_slug', $login['slug']);
+            $this->session->set('user_name', $login['name']);
+            return true;
+        }
+
+        return false;
+    }
+
     public function getLoginUser(): \stdClass
     {
         static $user;
