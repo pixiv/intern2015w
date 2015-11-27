@@ -62,12 +62,13 @@ class regist
         return true;
     }
 
-    private static function isUnique(string $user_slug): bool
+    private static function isUnique(string $slug): bool
     {
-        $slug = trim($user_slug);
-        $query = 'SELECT * FROM `users` WHERE `slug` = ? OR `name` = ?;';
+        $slug = trim($slug);
+        $query = 'SELECT * FROM `users` WHERE `slug` = :slug;';
         $stmt = db()->prepare($query);
-        $stmt->execute([$slug]);
+        $stmt->bindValue(':slug', $slug, PDO::PARAM_STR);
+        $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return empty($data);
