@@ -94,16 +94,15 @@ final class Application extends \Baguette\Application
         return $token;
     }
 
-    // XXX: accessing $_POST is bad idea?
     public function verifyAuthenticityToken(): bool
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET'
-            || $_SERVER['REQUEST_METHOD'] === 'HEAD'
+        if ($this->server['REQUEST_METHOD'] === 'GET'
+            || $this->server['REQUEST_METHOD'] === 'HEAD'
         )
             return true;
 
-        if (isset($_POST['authenticity_token'])
-            && $_POST['authenticity_token'] === self::getAuthenticityToken()
+        if (isset($this->post['authenticity_token'])
+            && $this->post['authenticity_token'] === self::getAuthenticityToken()
         ) {
             self::setAuthenticityToken();
             return true;

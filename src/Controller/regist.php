@@ -14,17 +14,17 @@ class regist
 
         $is_unique = true;
 
-        if (isset($_POST['slug'], $_POST['user'], $_POST['password'])
+        if (isset($app->post['slug'], $app->post['user'], $app->post['password'])
             && $app->verifyAuthenticityToken()
-            && $is_unique = self::isUnique($_POST['slug'])
-            && self::createUser($_POST['slug'], $_POST['user'], $_POST['password'])
+            && $is_unique = self::isUnique($app->post['slug'])
+            && self::createUser($app->post['slug'], $app->post['user'], $app->post['password'])
         ) {
-            $app->setLoginUser($_POST['slug']);
+            $app->setLoginUser($app->post['slug']);
             return new Response\RedirectResponse('/');
         }
 
         return new TemplateResponse('regist.tpl.html', [
-            'user' => isset($_POST['user']) ? $_POST['user'] : null,
+            'user' => isset($app->post['user']) ? $app->post['user'] : null,
             'is_daburi' => !$is_unique,
         ]);
     }

@@ -16,10 +16,10 @@ final class add_room
         if (!$app->isLoggedIn())
             return new RedirectResponse('login');
 
-        if (isset($_POST['slug'], $_POST['name'])
+        if (isset($app->post['slug'], $app->post['name'])
             && $app->verifyAuthenticityToken()
-            && self::createRoom($_POST['slug'], $_POST['name'], $app->getLoginUser()))
-            return new RedirectResponse('/rooms/' . $_POST['slug']);
+            && self::createRoom($app->post['slug'], $app->post['name'], $app->getLoginUser()))
+            return new RedirectResponse('/rooms/' . $app->post['slug']);
 
         return new RedirectResponse('/');
     }

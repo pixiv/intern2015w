@@ -17,12 +17,12 @@ final class login
             return new Response\RedirectResponse('/');
 
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_POST['user'], $_POST['password'])
+        if (isset($app->post['user'], $app->post['password'])
             && $app->verifyAuthenticityToken()
-            && $_POST['user'] !== 'system'
+            && $app->post['user'] !== 'system'
         ) {
-            $slug = trim($_POST['user']);
-            $pass = $_POST['password'];
+            $slug = trim($app->post['user']);
+            $pass = $app->post['password'];
 
             if (self::verifyPassword($slug, $pass)) {
                 $app->setLoginUser($slug);
@@ -31,7 +31,7 @@ final class login
         }
 
         return new TemplateResponse('login.tpl.html', [
-            'user' => isset($_POST['user']) ? $_POST['user'] : null,
+            'user' => isset($app->post['user']) ? $app->post['user'] : null,
         ]);
     }
 

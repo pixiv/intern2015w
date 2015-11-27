@@ -15,8 +15,12 @@ final class room
         $room = $action->param['slug'];
         $data = self::getRoomInfo($room);
 
-        if (!empty($_REQUEST['message']) && $app->isLoggedIn())
-            self::putMessage($data['id'], $app->session->get('user_id', ['default' => 0]), $_REQUEST['message']);
+        if (!empty($app->post['message']) && $app->isLoggedIn())
+            self::putMessage(
+                $data['id'],
+                $app->session->get('user_id', ['default' => 0]),
+                $app->post['message']
+            );
 
         $talk = self::getRoomTalks($data['id']);
         $users = [];
