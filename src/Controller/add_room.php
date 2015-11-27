@@ -40,7 +40,7 @@ final class add_room
         if (!self::isUnique($room_slug))
             return false;
 
-        if (preg_match('/\A[a-zA-Z0-9]+\z/', $slug) !== 1)
+        if (preg_match('/\A[a-zA-Z0-9]+\z/', $room_slug) !== 1)
             return false;
 
         $query = array(
