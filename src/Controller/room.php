@@ -12,27 +12,13 @@ final class room
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $room  = $action->param['slug'];
+        $room = $action->param['slug'];
+        $data = self::getRoomInfo($room);
 
-        $query = 'SELECT * FROM `rooms` WHERE `slug` = ?';
-        $stmt = db()->prepare($query);
-        $stmt->execute([$room]);
-        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if (!empty($_REQUEST['message']) && $app->isLoggedIn())
+            self::putMessage($data['id'], $app->session->get('user_id', ['default' => 0]), $_REQUEST['message']);
 
-        if (!empty($_REQUEST['message'])) {
-            $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-            $message = str_replace('"', '\\"', $_REQUEST['message']);
-            $user_id = $_REQUEST['user_id'];
-            $query = 'INSERT INTO `posts` VALUES(?, ?, ?, ?);';
-            $stmt = db()->prepare($query);
-            $stmt->execute([$data['id'], $user_id, $now, $message]);
-        }
-
-        $query = 'SELECT * FROM `posts` WHERE `room_id` = ? ORDER BY datetime(`posted_at`) DESC LIMIT 100';
-        $stmt = db()->prepare($query);
-        $stmt->execute([$data['id']]);
-        $talk = $stmt->fetchALL(\PDO::FETCH_ASSOC);
-
+        $talk = self::getRoomTalks($data['id']);
         $users = [];
         foreach ($talk as $s) {
             $user_id = $s['user_id'];
@@ -50,5 +36,46 @@ final class room
             'talk' => $talk,
             'users' => $users,
         ]);
+    }
+
+    private static function getRoomInfo(string $room_slug): array
+    {
+        $query = 'SELECT * FROM `rooms` WHERE `slug` = :slug';
+        $stmt = db()->prepare($query);
+        $stmt->bindValue(':slug', $room_slug, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    private static function getRoomTalks(string $room_id): array
+    {
+        $query = 'SELECT * FROM `posts` WHERE `room_id` = :room_id ORDER BY datetime(`posted_at`) DESC LIMIT 100';
+        $stmt = db()->prepare($query);
+        $stmt->bindValue(':room_id', $room_id, \PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchALL(\PDO::FETCH_ASSOC);
+    }
+
+    private static function putMessage(int $room_id, int $uid, string $message): bool
+    {
+        try {
+            db()->beginTransaction();
+
+            $query = 'INSERT INTO `posts` VALUES(:room_id, :uid, :date, :message);';
+            $stmt = db()->prepare($query);
+            $stmt->bindValue(':room_id', $room_id, \PDO::PARAM_INT);
+            $stmt->bindValue(':uid', $uid, \PDO::PARAM_INT);
+            $stmt->bindValue(':date', date('Y-m-d H:i:s', strtotime('+9 hours')), \PDO::PARAM_STR);
+            $stmt->bindValue(':message', $message, \PDO::PARAM_STR);
+            $stmt->execute();
+
+            db()->commit();
+        } catch (PDOException $e) {
+            db()->rollback();
+            return false;
+        }
+
+        return true;
     }
 }
