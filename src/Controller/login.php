@@ -38,6 +38,8 @@ final class login
                     return new Response\RedirectResponse('/');
                 }
             }
+        } else if (!isset($_POST['user'], $_POST['password'])){
+            $login = true;
         } else {
             $login = false;
         }

@@ -119,5 +119,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # chef-validator, unless you changed the configuration.
   #
   #   chef.validation_client_name = "ORGNAME-validator"
-  config.vm.provision :shell, :inline => "/usr/local/php7/bin/php /vagrant/setup; /usr/local/php7/bin/php -S 0.0.0.0:3939 /vagrant/htdocs/index.php &"
+  config.vm.provision :shell, :inline => "sudo -u vagrant /home/vagrant/init.sh start"
 end
