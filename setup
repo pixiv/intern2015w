@@ -39,8 +39,9 @@ fwrite(STDERR, "[DSN] {$sqlite_dsn}\n");
 
 $pdo = new \PDO($sqlite_dsn, null, null, [PDO::ATTR_PERSISTENT => true]);
 
+
 $pass = array(
-    'system' => password_hash('system', PASSWORD_DEFAULT),
+    'system' => '!', // systemをログイン不可にする
     'root'   => password_hash('nimda', PASSWORD_DEFAULT),
     'chobi'  => password_hash('cbcb', PASSWORD_DEFAULT)
 );
