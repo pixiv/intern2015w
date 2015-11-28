@@ -11,20 +11,23 @@ class register
         if ($app->isLoggedIn())
             return new Response\RedirectResponse('/');
 
-        $is_unique = true;
+        $is_valid = true;
 
-        if (isset($app->post['slug'], $app->post['user'], $app->post['password'])
-            && $app->verifyAuthenticityToken()
-            && $is_unique = self::isUnique($app->post['slug'])
-            && self::createUser($app->post['slug'], $app->post['user'], $app->post['password'])
-        ) {
-            $app->setLoginUser($app->post['slug']);
-            return new Response\RedirectResponse('/');
+        if (isset($app->post['slug'], $app->post['user'], $app->post['password'])) {
+            if (!$app->verifyAuthenticityToken())
+                return new Response\RedirectResponse('/');
+
+            if (self::createUser($app->post['slug'], $app->post['user'], $app->post['password'])) {
+                $app->setLoginUser($app->post['slug']);
+                return new Response\RedirectResponse('/');
+            } else {
+                $is_valid = false;
+            }
         }
 
         return new TemplateResponse('register.tpl.html', [
-            'user' => isset($app->post['user']) ? $app->post['user'] : null,
-            'is_daburi' => !$is_unique,
+            'user' => $app->post['user'] ?? null,
+            'is_daburi' => !$is_valid,
         ]);
     }
 

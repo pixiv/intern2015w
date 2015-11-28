@@ -16,8 +16,6 @@ namespace Nyaan;
  * @proprety-read \Baguette\Session\SessionInterface $session
  */
 
-final class InvalidAuthenticityToken extends \Exception {}
-
 final class Application extends \Baguette\Application
 {
     public function __get($name) { return $this->$name; }
@@ -106,9 +104,9 @@ final class Application extends \Baguette\Application
         ) {
             self::setAuthenticityToken();
             return true;
-        } else {
-            throw new InvalidAuthenticityToken();
         }
+
+        return false;
     }
 
     public static function getRoutingMap(): array

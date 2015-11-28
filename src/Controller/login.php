@@ -13,11 +13,9 @@ final class login
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        if ($app->isLoggedIn())
-            return new Response\RedirectResponse('/');
-
         // systemは特殊なユーザーなのでログインできない
-        if (isset($app->post['user'], $app->post['password'])
+        if (!$app->isLoggedIn()
+            && isset($app->post['user'], $app->post['password'])
             && $app->verifyAuthenticityToken()
             && $app->post['user'] !== 'system'
         ) {
@@ -26,13 +24,14 @@ final class login
 
             if (self::verifyPassword($slug, $pass)) {
                 $app->setLoginUser($slug);
-                return new Response\RedirectResponse('/');
+            } else {
+                return new TemplateResponse('login.tpl.html', [
+                    'user' => $app->post['user'] ?? null,
+                ]);
             }
         }
 
-        return new TemplateResponse('login.tpl.html', [
-            'user' => isset($app->post['user']) ? $app->post['user'] : null,
-        ]);
+        return new Response\RedirectResponse('/');
     }
 
     private static function verifyPassword(string $slug, string $pass)
