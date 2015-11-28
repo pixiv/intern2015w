@@ -4,7 +4,7 @@ use Nyaan\Application;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-error_reporting(-1);
+error_reporting(0);
 
 try {
     call_user_func(function(){
