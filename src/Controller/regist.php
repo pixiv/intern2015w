@@ -11,7 +11,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
+        $is_daburi = self::isTyouhuku($_REQUEST['user'] ?? '');
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
             $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
