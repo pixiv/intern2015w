@@ -15,8 +15,8 @@
         <form action="/login" class="loginform">
             <fieldset>
                 <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
+                <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
+                <input name=password placeholder="パスワード">
                 <button type=submit>Login</button>
             </fieldset>
         </form>
