@@ -51,6 +51,11 @@ class regist
         $stmt = db()->prepare($query);
         $stmt->execute();
 
+        //パスワードをハッシュ化
+        $options = [
+            'cost' => 12,
+        ];
+        $password = password_hash($password, PASSWORD_BCRYPT, $options);
         $id = db()->lastInsertId();
         $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
         $stmt = db()->prepare($query);

@@ -1,6 +1,11 @@
 {% extends "layout.tpl.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
+    {% if error %}
+        <div>
+            {{ error }}
+        </div>
+    {% endif %}
     <form action="/login" class="loginform">
         <fieldset>
             <legend>Login</legend>
