@@ -12,8 +12,11 @@ final class logout
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $app->session->destroy();
+        if ($app->isLoggedin()) {
+            $app->session->destroy();
 
-        return new Response\TwigResponse('logout.tpl.html');
+            return new Response\TwigResponse('logout.tpl.html');
+        }
+        return new Response\RedirectResponse('/');
     }
 }
