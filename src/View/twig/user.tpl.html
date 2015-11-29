@@ -8,6 +8,19 @@
             <dd>@{{ user.slug }}</dd>
             <dt>name</dt>
             <dd>{{  user.name }}</dd>
+            {% if user.website %}
+                <dt>website</dt>
+                <dd><a href="{{ user.website }}">{{ user.website }}</a></dd>
+            {% endif %}
+            {% if user.twitter %}
+                <dt>Twitter</dt>
+                <dd><a href="https://twitter.com/{{ user.twitter }}">{{ user.twitter }}</a></dd>
+            {% endif %}
+            {% if user.blood_type %}
+                <dt>血液型</dt>
+                <dd>{{ user.blood_type }}</dd>
+            {% endif %}
+
         </dl>
     </section>
 {% endblock %}
