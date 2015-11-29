@@ -32,7 +32,7 @@ class regist
     {
         // systemは特殊なユーザーなので登録できない
         if (empty($user_name) || $user_name === 'system') {
-            return false;
+            return true;
         }
 
         $user = trim($user_name);
