@@ -15,7 +15,6 @@ final class login
         if ($app->session->get('user_id', ['default' => false])) {
             return new Response\RedirectResponse('/');
         }
-
         // systemは特殊なユーザーなのでログインできない
         if (isset($_POST['user'], $_POST['password'], $_POST['xsrf_token']) && $_POST['user'] != 'system') {
             $user = trim($_POST['user']);
@@ -39,11 +38,13 @@ final class login
                         $app->session->set('user_slug', $login['slug']);
                         $app->session->set('user_name', $login['name']);
                         return new Response\RedirectResponse('/');
-                    } else {
-                        // CSRF failure
                     }
+                } else {
+                    $login = false;
                 }
             }
+
+
         } else if (!isset($_POST['user'], $_POST['password'])){
             $login = true;
         } else {

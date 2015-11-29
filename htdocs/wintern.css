@@ -73,3 +73,7 @@ footer {
     text-align: center;
     color: #CCC;
 }
+
+strong {
+    color: #ff0000;
+}
