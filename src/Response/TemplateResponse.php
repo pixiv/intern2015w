@@ -25,6 +25,7 @@ final class TemplateResponse extends \Baguette\Response\TwigResponse
             'now'     => $app->now,
             'isLoggedIn' => $app->isLoggedIn(),
             'loginUser'  => $app->getLoginUser(),
+            'xsrf_token' => $app->getCsrfTokenValue(),
         ];
 
         return static::$twig->render($this->tpl_name, $params);

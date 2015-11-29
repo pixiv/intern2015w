@@ -12,11 +12,15 @@ class register
 
         $is_duplicated = self::isDuplicated(isset($_POST['slug']) ? $_POST['slug'] : '');
         if (!$is_duplicated && isset($_POST['slug'], $_POST['password'])) {
-            $login = self::register($_POST['slug'], $_POST['user'], $_POST['password']);
-            $app->session->set('user_id', $login['user_id']);
-            $app->session->set('user_slug', $login['slug']);
-            $app->session->set('user_name', $login['name']);
-            return new Response\RedirectResponse('/');
+            $csrf_token = $app->csrf_session->getCsrfToken();
+            $csrf_value = $_POST['xsrf_token'];
+            if ($csrf_token->isValid($csrf_value)) {
+                $login = self::register($_POST['slug'], $_POST['user'], $_POST['password']);
+                $app->session->set('user_id', $login['user_id']);
+                $app->session->set('user_slug', $login['slug']);
+                $app->session->set('user_name', $login['name']);
+                return new Response\RedirectResponse('/');
+            }
         }
         else if (!isset($_POST['slug'])) {
             $is_duplicated = false;
@@ -24,6 +28,7 @@ class register
         return new Response\TwigResponse('register.tpl.html', [
             'user' => isset($_POST['user']) ? $_POST['user'] : null,
             'is_duplicated' => $is_duplicated,
+            'xsrf_token' => $app->getCsrfTokenValue(),
         ]);
     }
 

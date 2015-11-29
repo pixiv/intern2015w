@@ -22,6 +22,7 @@
         "erusev/parsedown": "^1.6",
         "vlucas/phpdotenv": "^2.1",
         "symfony/filesystem": "^2.7",
-        "ircmaxell/password-compat": "^1.0"
+        "ircmaxell/password-compat": "^1.0",
+        "aura/session": "^2.0"
     }
 }

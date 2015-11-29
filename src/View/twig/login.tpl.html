@@ -6,6 +6,7 @@
             <legend>Login</legend>
             <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
             <input name=password type=password placeholder="パスワード">
+            <input name=xsrf_token type=hidden value={{ xsrf_token }}>
             <button type=submit>Login</button>
         </fieldset>
     </form>

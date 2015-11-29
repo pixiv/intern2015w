@@ -17,7 +17,11 @@ final class add_room
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
             && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
-            return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
+            $csrf_token = $app->csrf_session->getCsrfToken();
+            $csrf_value = $_POST['xsrf_token'];
+            if ($csrf_token->isValid($csrf_value)) {
+                return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
+            }
         }
 
         return new Response\RedirectResponse('/');

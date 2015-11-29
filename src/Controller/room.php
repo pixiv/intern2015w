@@ -18,8 +18,9 @@ final class room
         $stmt = db()->prepare($query, array('text'));
         $stmt->execute(array($room));
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if (!empty($_POST['message'])) {
+        $csrf_token = $app->csrf_session->getCsrfToken();
+        $csrf_value = isset($_POST['xsrf_token']) ? $_POST['xsrf_token'] : '';
+        if (!empty($_POST['message']) && $csrf_token->isValid($csrf_value)) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = str_replace('"', '\\"', $_POST['message']);
             $user_id = $_POST['user_id'];
@@ -49,6 +50,7 @@ final class room
             'room' => $data,
             'talk' => $talk,
             'users' => $users,
+            'xsrf_token' => $app->getCsrfTokenValue(),
         ]);
     }
 }

@@ -43,6 +43,10 @@ call_user_func(function(){
     $app->setSession($session);
     $session->start();
 
+    $factory = new \Aura\Session\SessionFactory;
+    $app->setSessionFactory($factory);
+    $app->setCsrfToken();
+
     $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : $_SERVER['PHP_SELF'];
     $path = ($path === '/index.php') ? '/' : $path;
     $router = new \Teto\Routing\Router($routing_map);
