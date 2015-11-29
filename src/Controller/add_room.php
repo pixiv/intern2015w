@@ -47,9 +47,9 @@ final class add_room
         $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
         $user_name = $user->name;
         $message = str_replace('"', '\\"', "**{$user_name}さん**が部屋を作りました！");
-        $query = "INSERT INTO `posts` VALUES( {$id}, 0, ?, ? )";
+        $query = "INSERT INTO `posts` VALUES( ?, 0, ?, ? )";
         $stmt = db()->prepare($query, array('text'));
-        $stmt->execute(array($now, $message));
+        $stmt->execute(array($id, $now, $message));
 
         return true;
     }
