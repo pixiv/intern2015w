@@ -12,15 +12,16 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['slug']) ?? '');
-
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+        $slug = isset($_POST['slug']) ? $_POST['slug'] : '';
+        $is_daburi = self::isTyouhuku($slug);
+        $is_valid = preg_match('/^[-a-zA-Z]+$/', $slug) == 1;
+        if (!$is_daburi && $is_valid && isset($_POST['slug'], $_POST['name'])
+            && self::register($_POST['slug'], $_POST['name'], $app->getLoginUser())
         ) {
             $csrf_token = $app->csrf_session->getCsrfToken();
             $csrf_value = $_POST['xsrf_token'];
             if ($csrf_token->isValid($csrf_value)) {
-                return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
+                return new Response\RedirectResponse('/rooms/' . $_POST['slug']);
             }
         }
 

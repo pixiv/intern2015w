@@ -10,8 +10,10 @@ class register
             return new Response\RedirectResponse('/');
         }
 
-        $is_duplicated = self::isDuplicated(isset($_POST['slug']) ? $_POST['slug'] : '');
-        if (!$is_duplicated && isset($_POST['slug'], $_POST['password'])) {
+        $slug = isset($_POST['slug']) ? $_POST['slug'] : '';
+        $is_duplicated = self::isDuplicated($slug);
+        $is_valid = preg_match('/^[-a-zA-Z0-9]+$/', $slug) == 1;
+        if (!$is_duplicated && $is_valid && isset($_POST['slug'], $_POST['password'])) {
             $csrf_token = $app->csrf_session->getCsrfToken();
             $csrf_value = $_POST['xsrf_token'];
             if ($csrf_token->isValid($csrf_value)) {
