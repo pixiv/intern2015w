@@ -21,9 +21,7 @@ class register
         $is_daburi = $slug === NULL || self::isTyouhuku($slug);
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $token = $app->session->get('token', ['default' => false]);
-            if (isset($_REQUEST['token']) && $_REQUEST['token'] === $token) {
-                $app->session->set('token', NULL);
+            if ($app->isTokenVerified) {
                 $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
                 $app->session->set('user_id', $login['id']);
                 $app->session->set('user_slug', $login['slug']);
@@ -33,13 +31,9 @@ class register
             }
         }
 
-        $token = csrf_token();
-        $app->session->set('token', $token);
-
         return new Response\TemplateResponse('register.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
-            'token' => $token
         ]);
     }
 

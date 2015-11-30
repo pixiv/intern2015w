@@ -42,6 +42,8 @@ try {
         $session = new \Baguette\Session\PhpSession;
         $app->setSession($session);
         $session->start();
+        $app->isVerified = $app;
+        $app->isTokenVerified = $app->post['token'] === $session->get('token', ['default' => false]);
 
         $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : $_SERVER['PHP_SELF'];
         $path = ($path === '/index.php') ? '/' : $path;

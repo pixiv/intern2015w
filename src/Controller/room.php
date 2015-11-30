@@ -19,10 +19,8 @@ final class room
         $stmt->execute([$room]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        $token = $app->session->get('token', ['default' => false]);
         if ($_SERVER['REQUEST_METHOD'] === 'POST'
-            && isset($_POST['token']) && $_POST['token'] === $token) {
-            $app->session->set('token', NULL);
+            && $app->isTokenVerified) {
             return $this->post($room, $app->session->get('user_id'), $_POST['message'] ?? '');
         }
 
@@ -42,15 +40,11 @@ final class room
             }
         }
 
-        $token = csrf_token();
-        $app->session->set('token', $token);
-
         return new Response\TemplateResponse('room.tpl.html', [
             'slug' => $room,
             'room' => $data,
             'talk' => $talk,
             'users' => $users,
-            'token' => $token
         ]);
     }
 
