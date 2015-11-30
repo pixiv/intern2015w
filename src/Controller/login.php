@@ -27,6 +27,7 @@ final class login
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
                 . "WHERE `users`.`slug` = \"${user}\" ";
             $stmt = db()->prepare($query);
+            $stmt->bindValue(':user', $user, \PDO::PARAM_STR);
             $stmt->execute();
 
             if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
