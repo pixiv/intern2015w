@@ -9,27 +9,30 @@ class register
         if ($app->session->get('user_id', ['default' => false])) {
             return new Response\RedirectResponse('/');
         }
-
+        $message = "";
         $slug = isset($_POST['slug']) ? $_POST['slug'] : '';
         $is_duplicated = self::isDuplicated($slug);
         $is_valid = preg_match('/^[-a-zA-Z0-9]+$/', $slug) == 1;
-        if (!$is_duplicated && $is_valid && isset($_POST['slug'], $_POST['password'])) {
-            $csrf_token = $app->csrf_session->getCsrfToken();
-            $csrf_value = $_POST['xsrf_token'];
-            if ($csrf_token->isValid($csrf_value)) {
-                $login = self::register($_POST['slug'], $_POST['user'], $_POST['password']);
-                $app->session->set('user_id', $login['user_id']);
-                $app->session->set('user_slug', $login['slug']);
-                $app->session->set('user_name', $login['name']);
-                return new Response\RedirectResponse('/');
+        if (!$is_duplicated && $is_valid && isset($_POST['slug'], $_POST['password'], $_POST['re_password'])) {
+            if ($_POST['password'] === $_POST['re_password']) {
+                $csrf_token = $app->csrf_session->getCsrfToken();
+                $csrf_value = $_POST['xsrf_token'];
+                if ($csrf_token->isValid($csrf_value)) {
+                    $login = self::register($_POST['slug'], $_POST['user'], $_POST['password']);
+                    $app->session->set('user_id', $login['user_id']);
+                    $app->session->set('user_slug', $login['slug']);
+                    $app->session->set('user_name', $login['name']);
+                    return new Response\RedirectResponse('/');
+                }
+            } else {
+                $message = "正しくパスワードを入力してください";
             }
-        }
-        else if (!isset($_POST['slug'])) {
-            $is_duplicated = false;
+        } else if ($is_duplicated && !empty($_POST['slug'])) {
+            $message = "既にそのユーザーは登録されています";
         }
         return new Response\TwigResponse('register.tpl.html', [
             'user' => isset($_POST['user']) ? $_POST['user'] : null,
-            'is_duplicated' => $is_duplicated,
+            'message' => $message,
             'xsrf_token' => $app->getCsrfTokenValue(),
         ]);
     }

@@ -7,11 +7,12 @@
             <input name=user value="{{ user }}" required placeholder="ユーザー名" >
             <input name=slug value="{{ slug }}" required placeholder="ログイン名"  pattern="[a-zA-Z0-9]+">
             <input name=password type=password required placeholder="パスワード">
+            <input name=re_password type=password required placeholder="パスワードを再度入力">
             <input name=xsrf_token type=hidden value="{{ xsrf_token }}">
             <button type=submit>Submit</button>
         </fieldset>
     </form>
-    {% if is_duplicated == true %}
-        <p>すでにユーザーが登録されています</p>
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
     {% endif %}
 {% endblock %}
