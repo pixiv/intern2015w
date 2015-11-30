@@ -5,6 +5,7 @@ use Nyaan\Application;
 require __DIR__ . '/../vendor/autoload.php';
 
 error_reporting(0);
+ini_set('session.use_strict_mode', true);
 
 try {
     call_user_func(function(){

@@ -34,6 +34,7 @@ final class login
                 $stmt->execute([$login['id']]);
                 $res = $stmt->fetch(\PDO::FETCH_ASSOC);
                 if ($res && password($pass, $res['password']) === true) {
+                    $app->refreshSession();
                     $app->session->set('user_id', $login['id']);
                     $app->session->set('user_slug', $login['slug']);
                     $app->session->set('user_name', $login['name']);

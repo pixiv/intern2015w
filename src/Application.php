@@ -45,6 +45,13 @@ final class Application extends \Baguette\Application
         $this->session = $session;
     }
 
+    public function refreshSession()
+    {
+        $this->session->destroy();
+        $this->session = new \Baguette\Session\PhpSession;
+        $this->session->start();
+    }
+
     public function isLoggedIn(): bool
     {
         return $this->session->get('user_id', ['default' => 0]) > 0;
