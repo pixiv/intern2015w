@@ -36,8 +36,9 @@ class register
 
         $user = trim($user_name);
         $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        $query = "SELECT * FROM `users` WHERE `slug` = ? ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $user, \PDO::PARAM_STR);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -46,13 +47,16 @@ class register
 
     private static function register($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( ?, ? ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $slug, \PDO::PARAM_STR);
+        $stmt->bindParam(2, $name, \PDO::PARAM_STR);
         $stmt->execute();
 
         $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
+        $query = "INSERT INTO `user_passwords` VALUES( {$id}, ? ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $password, \PDO::PARAM_STR);
         $stmt->execute();
 
         return [
