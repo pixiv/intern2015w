@@ -56,7 +56,8 @@ class register
         $id = db()->lastInsertId();
         $query = "INSERT INTO `user_passwords` VALUES( {$id}, ? ); ";
         $stmt = db()->prepare($query);
-        $stmt->bindParam(1, $password, \PDO::PARAM_STR);
+        $password_h = password_hash($password, PASSWORD_DEFAULT, array('cost' => 10));
+        $stmt->bindParam(1, $password_h, \PDO::PARAM_STR);
         $stmt->execute();
 
         return [
