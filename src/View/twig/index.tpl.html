@@ -25,6 +25,7 @@
     <ul>
         {% for r in rooms %}
             <li><a href="/rooms/{{ r.slug }}">{{ r.name }}</a>
+                : {{ r.slug }}
         {% endfor %}
     </ul>
 {% endblock %}
