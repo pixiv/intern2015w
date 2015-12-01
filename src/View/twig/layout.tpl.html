@@ -15,6 +15,10 @@
                     <a href="/@{{ loginUser.slug }}">{{ loginUser.name }}</a>
                     <small><a href="/logout">ログアウト</a></small>
                 </div>
+            {% else %}
+                <div>
+                    <a href="/regist">Sign_up</a>
+                </div>                
             {% endif %}
 
         </div>
