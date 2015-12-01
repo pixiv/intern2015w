@@ -15,9 +15,8 @@ final class Markdown
      */
     public static function render($input)
     {
-        return preg_replace(
-            '@</p>$@', '',
-            preg_replace('@^<p>@', '', (new \Parsedown)->text($input))
-        );
+        return preg_replace('@href="[jJ]ava[Ss]cript:@', '',
+          preg_replace('@</p>$@', '',
+            preg_replace('@^<p>@', '', (new \Parsedown)->text($input))));
     }
 }
