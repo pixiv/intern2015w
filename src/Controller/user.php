@@ -13,8 +13,9 @@ final class user
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         $name = ltrim($action->param['user'], '@');
-        $query = "SELECT * FROM `users` WHERE `slug` = \"{$name}\"";
+        $query = "SELECT * FROM `users` WHERE `slug` = ?";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $name, \PDO::PARAM_STR);
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
