@@ -19,18 +19,15 @@ final class room
         $stmt->execute([':room' => $room]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!empty($_REQUEST['message'])) {
+        if (!empty(filter_input(INPUT_POST, 'message'))) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-            //$message = str_replace('"', '\\"', $_REQUEST['message']);
-            $message = $_REQUEST['message'];
-            $user_id = $_REQUEST['user_id'];
             $query = 'INSERT INTO `posts` VALUES( :data_id, :user_id, :now, :message )';
             $stmt = db()->prepare($query);
             $stmt->execute([
                 ':data_id' => $data['id'],
-                ':user_id' => $user_id,
+                ':user_id' => filter_input(INPUT_POST, 'user_id'),
                 ':now' => $now,
-                ':message' => $message,
+                ':message' => filter_input(INPUT_POST, 'message'),
             ]);
         }
 
