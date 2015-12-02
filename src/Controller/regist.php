@@ -13,7 +13,21 @@ class regist
 
         $is_daburi = self::isTyouhuku($_REQUEST['user'] ?? '');
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
+        if (!isset($_REQUEST['user'], $_REQUEST['slug'], $_REQUEST['password'], $_REQUEST['password_confirmation'])) {
+            return new Response\TwigResponse('regist.tpl.html', [
+              'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+              'is_daburi' => $is_daburi,
+            ]);
+        }
+
+        if ($_REQUEST['password'] != $_REQUEST['password_confirmation']) {
+            return new Response\TwigResponse('regist.tpl.html', [
+              'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+              'is_daburi' => $is_daburi,
+            ]);
+        }
+
+        if (!$is_daburi) {
             $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
