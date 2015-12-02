@@ -22,7 +22,7 @@ final class room
         if (!empty($_REQUEST['message'])) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = htmlspecialchars(str_replace('"', '\\"', $_REQUEST['message']));
-            $user_id = $_REQUEST['user_id'];
+            $user_id = $_SESSION['user_id'];
             $query = "INSERT INTO `posts` VALUES( {$data['id']}, {$user_id}, \"{$now}\", \"{$message}\" )";
             $stmt = db()->prepare($query);
             $stmt->execute();
