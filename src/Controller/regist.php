@@ -11,7 +11,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku($_REQUEST['user'] ?? '');
+        $is_daburi = self::isTyouhuku($_REQUEST['slug'] ?? '');
 
         if (!isset($_REQUEST['user'], $_REQUEST['slug'], $_REQUEST['password'], $_REQUEST['password_confirmation'])) {
             return new Response\TwigResponse('regist.tpl.html', [
