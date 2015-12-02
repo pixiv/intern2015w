@@ -19,6 +19,10 @@ final class user
         $stmt->execute();
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+        if (is_null($user['slug'])) {
+          return new Response\TemplateResponse('404.tpl.html', [], 404);
+        }
+
         return new Response\TemplateResponse('user.tpl.html', [
             'user' => $user,
         ]);

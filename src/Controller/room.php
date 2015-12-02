@@ -20,6 +20,10 @@ final class room
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
+        if (is_null($data['slug'])) {
+          return new Response\TemplateResponse('404.tpl.html', [], 404);
+        }
+
         if (!empty($_REQUEST['message'])) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = str_replace('"', '\\"', $_REQUEST['message']);
