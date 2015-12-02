@@ -27,7 +27,7 @@ final class room
                 ':data_id' => $data['id'],
                 ':user_id' => filter_input(INPUT_POST, 'user_id'),
                 ':now' => $now,
-                ':message' => filter_input(INPUT_POST, 'message'),
+                ':message' => filter_input(INPUT_POST, 'message', FILTER_SANITIZE_SPECIAL_CHARS),
             ]);
         }
 
