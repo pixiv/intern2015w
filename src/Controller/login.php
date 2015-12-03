@@ -21,16 +21,16 @@ final class login
             $user = trim($_REQUEST['user']);
             $pass = $_REQUEST['password'];
             $query
-                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
+                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name`, `user_passwords`.`password` '
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = \"${user}\" "
-                . "  AND `user_passwords`.`password` = \"${pass}\" ";
+                . "WHERE `users`.`slug` = \"${user}\" ";
             $stmt = db()->prepare($query);
             $stmt->execute();
+            $login = $stmt->fetch((\PDO::FETCH_ASSOC));
 
-            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            if ($login && password_verify($pass, $login['password'])) {
                 $app->session->set('user_id', $login['id']);
                 $app->session->set('user_slug', $login['slug']);
                 $app->session->set('user_name', $login['name']);
