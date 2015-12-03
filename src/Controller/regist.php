@@ -37,9 +37,9 @@ class regist
 
         $user = trim($user_name);
         $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        $query = 'SELECT * FROM `users` WHERE `slug` = :user';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':user' => $user]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
@@ -47,14 +47,14 @@ class regist
 
     private static function regist($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = 'INSERT INTO `users`(`slug`, `name`) VALUES( :slug, :name )';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':slug' => $slug, ':name' => $name]);
 
         $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
+        $query = 'INSERT INTO `user_passwords` VALUES( :id, :password )';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':id' => $id, ':password' => $password]);
 
         return [
             'id' => $id,
