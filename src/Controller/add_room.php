@@ -25,8 +25,9 @@ final class add_room
 
     private static function isTyouhuku(string $slug): bool
     {
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"${slug}\" ";
+        $query = "SELECT * FROM `rooms` WHERE `slug` = :slug ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(':slug', $slug);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -35,8 +36,10 @@ final class add_room
 
     private static function register($slug, $name, $user): bool
     {
-        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( :slug, :name ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(':slug', $slug);
+        $stmt->bindParam(':name', $name);
         $stmt->execute();
         $id = db()->lastInsertId();
 
