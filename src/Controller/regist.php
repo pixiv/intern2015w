@@ -11,7 +11,10 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
+        // validate daburi
+        if ( isset($app->get['slug']) ){
+            $is_daburi = self::isTyouhuku($app->get['slug']);
+        } else { $is_daburi = 0; }
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
             $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
@@ -28,14 +31,14 @@ class regist
         ]);
     }
 
-    private static function isTyouhuku(string $user_name): bool
+    private static function isTyouhuku(string $slug): bool
     {
         // systemは特殊なユーザーなので登録できない
-        if (empty($user_name) || $user_name === 'system') {
+        if (empty($slug) || $slug === 'system') {
             return false;
         }
 
-        $user = trim($user_name);
+        $user = trim($slug);
         $pass = $_REQUEST['password'];
         $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
         $stmt = db()->prepare($query);
@@ -51,8 +54,14 @@ class regist
         $stmt = db()->prepare($query);
         $stmt->execute();
 
-        $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
+        $query = "SELECT `id` FROM `users` WHERE `slug` = \"{$slug}\"; ";
+        $stmt = db()->prepare($query);
+        $stmt->execute();
+        $user = $stmt->fetch(\PDO::FETCH_ASSOC); // uniq
+        $id = $user['id'];
+
+        $hashed_password =  password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$hashed_password}\" ); ";
         $stmt = db()->prepare($query);
         $stmt->execute();
 
