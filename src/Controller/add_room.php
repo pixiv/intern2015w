@@ -12,7 +12,7 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $name = filter_input(INPUT_POST, 'name');
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
         $slug = filter_input(INPUT_POST, 'slug', FILTER_VALIDATE_REGEXP, ['options' =>
             ['regexp' => '/^[a-zA-Z0-9]+$/']
         ]);
