@@ -53,8 +53,9 @@ a:visited {
 }
 
 ul.chat {
-    color: #FFF;
+    color: #000;
     list-style-type: none;
+    background-color: #FFF;
 }
 
 .chat time {
