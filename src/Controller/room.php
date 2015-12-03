@@ -32,9 +32,10 @@ final class room
         $stmt = db()->prepare($query);
         $stmt->execute();
         $talk = $stmt->fetchALL(\PDO::FETCH_ASSOC);
+        $rtalk = array_reverse($talk);
 
         $users = [];
-        foreach ($talk as $s) {
+        foreach ($rtalk as $s) {
             $user_id = $s['user_id'];
             if (empty($users[$user_id])) {
                 $query = "SELECT * FROM `users` WHERE `id` = {$user_id}";
@@ -47,7 +48,7 @@ final class room
         return new Response\TemplateResponse('room.tpl.html', [
             'slug' => $room,
             'room' => $data,
-            'talk' => $talk,
+            'talk' => $rtalk,
             'users' => $users,
         ]);
     }
