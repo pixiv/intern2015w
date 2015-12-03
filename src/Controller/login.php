@@ -16,10 +16,13 @@ final class login
             return new Response\RedirectResponse('/');
         }
 
+        $user = filter_input(INPUT_POST, 'user', FILTER_VALIDATE_REGEXP, ['options' =>
+            ['regexp' => '/^[a-zA-Z0-9]+$/']
+        ]);
+        $pass = filter_input(INPUT_POST, 'password');
+
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
-            $user = trim($_REQUEST['user']);
-            $pass = $_REQUEST['password'];
+        if (!empty($user) && !empty($pass) && $user !== 'system') {
             $query
                 = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
                 . 'FROM `users` '
@@ -39,7 +42,7 @@ final class login
         }
 
         return new Response\TwigResponse('login.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+            'user' => $user ?? null,
         ]);
     }
 }
