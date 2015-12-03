@@ -2,8 +2,7 @@
 namespace Nyaan\Controller;
 use Baguette\Response;
 
-// FIXME: そんな英語はない
-class regist
+class register
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
@@ -14,14 +13,14 @@ class regist
         $is_daburi = self::isTyouhuku($_REQUEST['slug'] ?? '');
 
         if (!isset($_REQUEST['user'], $_REQUEST['slug'], $_REQUEST['password'], $_REQUEST['password_confirmation'])) {
-            return new Response\TwigResponse('regist.tpl.html', [
+            return new Response\TwigResponse('register.tpl.html', [
               'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
               'is_daburi' => $is_daburi,
             ]);
         }
 
         if ($_REQUEST['password'] != $_REQUEST['password_confirmation']) {
-            return new Response\TwigResponse('regist.tpl.html', [
+            return new Response\TwigResponse('register.tpl.html', [
               'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
               'is_daburi' => $is_daburi,
             ]);
@@ -29,7 +28,7 @@ class regist
 
         if (!$is_daburi) {
             $password_hash = password_hash($_REQUEST['password'], PASSWORD_DEFAULT);
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $password_hash);
+            $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $password_hash);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -37,7 +36,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('regist.tpl.html', [
+        return new Response\TwigResponse('register.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
         ]);
@@ -60,7 +59,7 @@ class regist
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $password): array
+    private static function register($slug, $name, $password): array
     {
         $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
         $stmt = db()->prepare($query);
