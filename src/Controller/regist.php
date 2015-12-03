@@ -11,10 +11,14 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
+        $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_SPECIAL_CHARS);
+        $slug = filter_input(INPUT_POST, 'slug', FILTER_VALIDATE_REGEXP, ['options' =>
+            ['regexp' => '/^[a-zA-Z0-9]+$/']
+        ]);
+        $password = filter_input(INPUT_POST, 'password');
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+        if (!empty($user) && !empty($slug) && !empty($password) && !self::isTyouhuku($user)) {
+            $login = self::regist($slug, $user, $password);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -23,8 +27,7 @@ class regist
         }
 
         return new Response\TwigResponse('regist.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
-            'is_daburi' => $is_daburi,
+            'user' => $user ?? null,
         ]);
     }
 
