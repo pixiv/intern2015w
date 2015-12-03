@@ -14,7 +14,8 @@ class regist
         $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+            $password_hash = password_hash($_REQUEST['password'], PASSWORD_DEFAULT);
+            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $password_hash);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);

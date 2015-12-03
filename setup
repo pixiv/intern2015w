@@ -39,6 +39,10 @@ fwrite(STDERR, "[DSN] {$sqlite_dsn}\n");
 
 $pdo = new \PDO($sqlite_dsn, null, null, [PDO::ATTR_PERSISTENT => true]);
 
+$pass_user0 = password_hash('system', PASSWORD_DEFAULT);
+$pass_user1 = password_hash('nimba', PASSWORD_DEFAULT);
+$pass_user2 = password_hash('cbcb', PASSWORD_DEFAULT);
+
 $queries = [
     'CREATE TABLE `users`( `id` INTEGER PRIMARY KEY AUTOINCREMENT, `slug` TEXT UNIQUE, `name` TEXT )',
     'CREATE TABLE `user_passwords`( `user_id` INTEGER PRIMARY KEY, `password` TEXT )',
@@ -57,12 +61,12 @@ $queries = [
     'CREATE INDEX `in_room_user_id` ON `in_rooms`( `user_id` )',
 
     'INSERT INTO `users` VALUES( 0, "system", "System" )',
-    'INSERT INTO `user_passwords` VALUES( 0, "system" )',
+    "INSERT INTO `user_passwords` VALUES( 0, \"{$pass_user0}\" )",
     'INSERT INTO `users` VALUES( 1, "root", "super user" )',
-    'INSERT INTO `user_passwords` VALUES( 1, "nimda" )',
+    "INSERT INTO `user_passwords` VALUES( 1, \"{$pass_user1}\" )",
     'INSERT INTO `user_profile` VALUES( 1, "http://pixiv.co.jp/", "pixiv", "AB" )',
     'INSERT INTO `users` VALUES( 2, "chobi", "チョビ" )',
-    'INSERT INTO `user_passwords` VALUES( 2, "cbcb" )',
+    "INSERT INTO `user_passwords` VALUES( 2, \"{$pass_user2}\" )",
     'INSERT INTO `user_profile` VALUES( 2, "http://times.pixiv.net/post/38140118669/%E3%83%94%E3%82%AF%E3%82%B7%E3%83%96%E3%81%AE%E7%A4%BE%E5%93%A1%E7%8A%AC", "chobi_pixiv", "Bombay" )',
     'INSERT INTO `rooms` VALUES( 1, "operators", "運営委員会" )',
     'INSERT INTO `rooms` VALUES( 2, "idobata-talks", "雑談の部屋" )',
