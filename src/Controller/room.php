@@ -25,7 +25,7 @@ final class room
             $stmt = db()->prepare($query);
             $stmt->execute([
                 ':data_id' => $data['id'],
-                ':user_id' => filter_input(INPUT_POST, 'user_id'),
+                ':user_id' => $app->getLoginUser()->id,
                 ':now' => $now,
                 ':message' => filter_input(INPUT_POST, 'message', FILTER_SANITIZE_SPECIAL_CHARS),
             ]);
