@@ -12,12 +12,12 @@ class regist
         }
 
         // validate daburi
-        if ( isset($app->get['slug']) ){
-            $is_daburi = self::isTyouhuku($app->get['slug']);
+        if ( isset($app->post['slug']) ){
+            $is_daburi = self::isTyouhuku($app->post['slug']);
         } else { $is_daburi = 0; }
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+        if (!$is_daburi && isset($app->post['slug'], $app->post['password'])) {
+            $login = self::regist($app->post['slug'], $app->post['user'], $app->post['password']);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -26,7 +26,7 @@ class regist
         }
 
         return new Response\TwigResponse('regist.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+            'user' => isset($app->post['user']) ? $app->post['user'] : null,
             'is_daburi' => $is_daburi,
         ]);
     }
@@ -39,7 +39,6 @@ class regist
         }
 
         $user = trim($slug);
-        $pass = $_REQUEST['password'];
         $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
         $stmt = db()->prepare($query);
         $stmt->execute();
