@@ -19,7 +19,10 @@ final class room
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        if (!empty($_REQUEST['message'])) {
+        if (!empty($_REQUEST['message'])
+            && $_REQUEST['ticket'] == $app->session->get('ticket')
+            && $_SERVER['REQUEST_METHOD'] == 'POST' )
+        {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = str_replace('"', '\\"', $_REQUEST['message']);
             $user_id = $_REQUEST['user_id'];
@@ -27,6 +30,9 @@ final class room
             $stmt = db()->prepare($query);
             $stmt->execute();
         }
+
+        $ticket = uniqid();
+        $app->session->set('ticket', $ticket);
 
         $query = "SELECT * FROM `posts` WHERE `room_id` = {$data['id']} ORDER BY datetime(`posted_at`) DESC LIMIT 100";
         $stmt = db()->prepare($query);
@@ -49,6 +55,7 @@ final class room
             'room' => $data,
             'talk' => $talk,
             'users' => $users,
+            'ticket' => $ticket,
         ]);
     }
 }
