@@ -66,9 +66,7 @@ php -S 0.0.0.0:3939 ./htdocs/index.php
 
 ## 質問チャットルーム
 
-技術的な質問については idobata.io のチャットルームにてサポートいたします。
-
-https://idobata.io/organizations/pixiv/rooms/intern2015w_guest/join_request/fa64b276-3e72-4fe1-881f-b188091d3699
+~~技術的な質問については idobata.io のチャットルームにてサポートいたします。~~ 終了しました
 
  * 基本的に回答は営業時間内（平日10:00-19:00）のみ行います
  * 回答はピクシブ株式会社のエンジニアが行います
