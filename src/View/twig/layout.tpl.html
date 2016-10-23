@@ -9,11 +9,11 @@
     </head>
     <body>
         <div id="navi">
-            <h1><a href="/">Wintern Chat</a></h1>
+            <h1 id="wintern"><a href="/">Wintern Chat</a></h1>
             {% if isLoggedIn %}
                 <div>
-                    <a href="/@{{ loginUser.slug }}">{{ loginUser.name }}</a>
-                    <small><a href="/logout">ログアウト</a></small>
+                    <a id="btn" href="/@{{ loginUser.slug }}">{{ loginUser.name }}</a>
+                    <small><a id="btn" href="/logout">ログアウト</a></small>
                 </div>
             {% endif %}
 

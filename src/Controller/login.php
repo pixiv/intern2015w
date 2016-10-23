@@ -15,7 +15,7 @@ final class login
         if ($app->session->get('user_id', ['default' => false])) {
             return new Response\RedirectResponse('/');
         }
-
+        
         // systemは特殊なユーザーなのでログインできない
         if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
             $user = trim($_REQUEST['user']);

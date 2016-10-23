@@ -2,7 +2,8 @@
 {% block title %}Top{% endblock %}
 {% block content %}
     {% if isLoggedIn %}
-        <form action="/add_room" method=post class="loginform">
+    <br>
+        <form id="room-addfield" action="/add_room" method=post class="loginform">
             <fieldset>
                 <legend>部屋追加</legend>
                 <input name=name required placeholder="部屋名" >
@@ -21,10 +22,11 @@
             </fieldset>
         </form>
     {% endif %}
+    <br>
     <h2>部屋一覧</h2>
-    <ul>
+    <ul id="rooms">
         {% for r in rooms %}
-            <li><a href="/rooms/{{ r.slug }}">{{ r.name }}</a>
+            <li><a id="btn" href="/rooms/{{ r.slug }}">{{ r.name }}</a>
         {% endfor %}
     </ul>
 {% endblock %}

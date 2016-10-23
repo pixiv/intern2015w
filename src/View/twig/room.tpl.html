@@ -9,14 +9,14 @@
             <button name=submit>更新</button>
         </form>
     {% else %}
-        <a href="/login">ログイン</a>
+        <a id="btn" href="/login">ログイン</a>
     {% endif %}
     <section class="content oneline">
         <h1>{{ room.name }}[{{ room.slug }}]</h1>
     </section>
     <ul class="chat">
         {% for t in talk %}
-            <li><a href="/@{{ users[t.user_id].slug }}" title="{{ users[t.user_id].name }}">@{{ users[t.user_id].slug }}</a>: {{ markdown(t.message) }} <time datetime="{{ t.posted_at|date('Y-m-d\\TH:i:s+09:00') }}">({{ t.posted_at }})</time></li>
+            <li><a id="btn" href="/@{{ users[t.user_id].slug }}" title="{{ users[t.user_id].name }}">@{{ users[t.user_id].slug }}</a>: {{ markdown(t.message) }} <time datetime="{{ t.posted_at|date('Y-m-d\\TH:i:s+09:00') }}">({{ t.posted_at }})</time></li>
         {% endfor %}
     </ul>
 {% endblock %}
