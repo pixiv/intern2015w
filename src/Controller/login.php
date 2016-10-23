@@ -8,6 +8,13 @@ use Baguette\Response;
  * @copyright 2015 pixiv Inc.
  * @license   WTFPL
  */
+
+ // XSS対策のため特殊文字をエスケープする関数
+  function h($str)
+ {
+     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+ }
+
 final class login
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
@@ -15,11 +22,13 @@ final class login
         if ($app->session->get('user_id', ['default' => false])) {
             return new Response\RedirectResponse('/');
         }
-        
+
         // systemは特殊なユーザーなのでログインできない
         if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
             $user = trim($_REQUEST['user']);
+            $user = h($user);
             $pass = $_REQUEST['password'];
+            $pass = h($pass);
             $query
                 = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
                 . 'FROM `users` '

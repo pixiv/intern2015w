@@ -3,6 +3,13 @@ namespace Nyaan\Controller;
 use Baguette\Response;
 
 // FIXME: そんな英語はない
+
+// XSS対策のため特殊文字をエスケープする関数
+ function h($str)
+{
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+}
+
 class regist
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
@@ -55,6 +62,10 @@ class regist
         $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
         $stmt = db()->prepare($query);
         $stmt->execute();
+
+        $_REQUEST['user'] = h($_REQUEST['user']);
+        $_REQUEST['slug'] = h($_REQUEST['slug']);
+        $_REQUEST['password'] = h($_REQUEST['password']);
 
         return [
             'id' => $id,

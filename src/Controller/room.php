@@ -8,6 +8,13 @@ use Nyaan\Response;
  * @copyright 2015 pixiv Inc.
  * @license   WTFPL
  */
+
+ // XSS対策のため特殊文字をエスケープする関数
+  function h($str)
+ {
+     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+ }
+
 final class room
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
@@ -22,6 +29,7 @@ final class room
         if (!empty($_REQUEST['message'])) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = str_replace('"', '\\"', $_REQUEST['message']);
+            $message = h($message);
             $user_id = $_REQUEST['user_id'];
             $query = "INSERT INTO `posts` VALUES( {$data['id']}, {$user_id}, \"{$now}\", \"{$message}\" )";
             $stmt = db()->prepare($query);

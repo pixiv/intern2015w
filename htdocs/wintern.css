@@ -28,6 +28,7 @@ a:visited {
 #navi {
     top: 0;
     margin: 0;
+    margin-top: 20px;
     color: #CCC;
     font-size: x-large;
 }
