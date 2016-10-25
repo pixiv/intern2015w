@@ -14,9 +14,10 @@ call_user_func(function(){
     $dotenv->required('DB_DSN')->notEmpty();
 
     $routing_map = [
+      // パスワードなどPOSTで送信すべきであるため、一部POSTに修正中(修正未完了)
         'logout'   => ['GET',  '/logout',      'logout'],
         'login'    => ['GET',  '/login',       'login'],
-                      ['GET',  '/login',       'login'],
+                      ['POST',  '/login',       'login'],
         'regist'   => ['GET',  '/regist',      'regist'],
                       ['POST', '/regist',      'regist'],
         'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],

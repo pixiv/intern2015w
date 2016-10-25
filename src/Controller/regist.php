@@ -4,6 +4,21 @@ use Baguette\Response;
 
 // FIXME: そんな英語はない
 
+//CSRF対策
+session_start();
+function setToken()
+{
+  $token = sha1(uniqid(mt_rand(), true));
+  $_SESSION['token'] = $token;
+}
+function checkToken()
+{
+  if (empty($_SESSION['token']) || ($_SESSION['token'] != $_POST['token'])) {
+      echo "不正なPOSTリクエストです。";
+      exit;
+  }
+}
+
 // XSS対策のため特殊文字をエスケープする関数
  function h($str)
 {
