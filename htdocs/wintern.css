@@ -4,7 +4,7 @@ html {
 
 body {
     margin: 0;
-    background-image: url(/wall.jpg);
+    background-image: url(wall.jpg);
     background-attachment: fixed;
     min-height: 100%;
     color: #CCC;
@@ -72,4 +72,8 @@ footer {
     margin: 0;
     text-align: center;
     color: #CCC;
+}
+
+strong {
+    color: #ff0000;
 }

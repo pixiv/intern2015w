@@ -22,6 +22,10 @@ final class Application extends \Baguette\Application
     /** @var \Baguette\Session\SessionInterface */
     private $session;
 
+
+    /** CSRF **/
+    private $factory;
+    private $csrf_session;
     /**
      * @param  \Teto\Routing\Action $action
      * @return \Baguette\Response\ResponseInterface
@@ -68,5 +72,17 @@ final class Application extends \Baguette\Application
         ];
 
         return $routing_map;
+    }
+    public function setSessionFactory(\Aura\Session\SessionFactory $factory) {
+        $this->factory = $factory;
+    }
+
+    public function setCsrfToken() {
+        $session = $this->factory->newInstance($_COOKIE);
+        $this->csrf_session = $session;
+    }
+
+    public function getCsrfTokenValue(): string {
+        return $this->csrf_session->getCsrfToken()->getValue();
     }
 }

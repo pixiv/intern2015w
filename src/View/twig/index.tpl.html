@@ -8,18 +8,21 @@
                 <input name=name required placeholder="部屋名" >
                 URL: <code>http://{{ server.HTTP_HOST }}/rooms/<input name=slug required placeholder="slug" pattern="[a-zA-Z0-9]+"></code>
                 <input name=user_id value="{{ loginUser.id }}" type=hidden>
+                <input name=xsrf_token type=hidden value="{{ xsrf_token }}">
                 <button type=submit>追加</button>
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
+        <form action="/login" method=post class="loginform">
             <fieldset>
                 <legend>Login</legend>
                 <input name=user value="{{ user }}" >
-                <input name=password>
+                <input name=password type=password>
+                <input name=xsrf_token type=hidden value="{{ xsrf_token }}">
                 <button type=submit>Login</button>
             </fieldset>
         </form>
+        <a href="/register/">新規ユーザー登録</a>
     {% endif %}
     <h2>部屋一覧</h2>
     <ul>

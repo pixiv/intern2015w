@@ -16,13 +16,13 @@ call_user_func(function(){
     $routing_map = [
         'logout'   => ['GET',  '/logout',      'logout'],
         'login'    => ['GET',  '/login',       'login'],
-                      ['GET',  '/login',       'login'],
-        'regist'   => ['GET',  '/regist',      'regist'],
-                      ['POST', '/regist',      'regist'],
+                      ['POST', '/login',       'login'],
+        'register' => ['GET',  '/register',    'register'],
+                      ['POST', '/register',    'register'],
         'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
                       ['POST', '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
         'add_romm' => ['POST', '/add_room',    'add_room'],
-        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[-a-zA-Z]+/']],
+        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[-a-zA-Z0-9]+/']],
         'index'    => ['GET',  '/',            'top'],
         '#404'     =>                          'fileloader',
     ];
@@ -42,6 +42,10 @@ call_user_func(function(){
     $session = new \Baguette\Session\PhpSession;
     $app->setSession($session);
     $session->start();
+
+    $factory = new \Aura\Session\SessionFactory;
+    $app->setSessionFactory($factory);
+    $app->setCsrfToken();
 
     $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : $_SERVER['PHP_SELF'];
     $path = ($path === '/index.php') ? '/' : $path;

@@ -2,12 +2,25 @@
 {% block title %}{{ user.name }} (@{{ user.slug }}) | Wintern Chat{% endblock %}
 {% block content %}
     <section class="content">
-        <h1>{{ user.name }}{% if user.id == loginUser.id %}(それはあなたです！){% endif %}</h1>
+        <h1>{{ user.name }}{% if user.user_id == loginUser.id %}(それはあなたです！){% endif %}</h1>
         <dl>
             <dt>slug</dt>
             <dd>@{{ user.slug }}</dd>
             <dt>name</dt>
             <dd>{{  user.name }}</dd>
+            {% if user.website %}
+                <dt>website</dt>
+                <dd><a href="{{ user.website }}">{{ user.website }}</a></dd>
+            {% endif %}
+            {% if user.twitter %}
+                <dt>Twitter</dt>
+                <dd><a href="https://twitter.com/{{ user.twitter }}">{{ user.twitter }}</a></dd>
+            {% endif %}
+            {% if user.blood_type %}
+                <dt>血液型</dt>
+                <dd>{{ user.blood_type }}</dd>
+            {% endif %}
+
         </dl>
     </section>
 {% endblock %}
