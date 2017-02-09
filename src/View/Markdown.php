@@ -1,5 +1,6 @@
 <?php
 namespace Nyaan\View;
+use HTMLPurifier;
 
 /**
  * @package   Nyaan\View
@@ -15,9 +16,11 @@ final class Markdown
      */
     public static function render($input)
     {
+        $purifier = new HTMLPurifier();
+        $sanitized = $purifier->purify((new \Parsedown)->text($input));
         return preg_replace(
             '@</p>$@', '',
-            preg_replace('@^<p>@', '', (new \Parsedown)->text($input))
+            preg_replace('@^<p>@', '', $sanitized)
         );
     }
 }

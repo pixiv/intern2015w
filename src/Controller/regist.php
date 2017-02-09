@@ -37,8 +37,10 @@ class regist
 
         $user = trim($user_name);
         $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        //$query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        $query = "SELECT * FROM `users` WHERE `slug` = :user ";
         $stmt = db()->prepare($query);
+        $stmt->bindValue(':user', $user, \PDO::PARAM_STR);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
@@ -47,13 +49,21 @@ class regist
 
     private static function regist($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( :slug, :name ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindValue(':slug', $slug, \PDO::PARAM_STR);
+        $stmt->bindValue(':name', $name, \PDO::PARAM_STR);
         $stmt->execute();
 
+        //パスワードをハッシュ化
+        $options = [
+            'cost' => 12,
+        ];
+        $password = password_hash($password, PASSWORD_BCRYPT, $options);
         $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
+        $query = "INSERT INTO `user_passwords` VALUES( {$id}, :password ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindValue(':password', $password, \PDO::PARAM_STR);
         $stmt->execute();
 
         return [

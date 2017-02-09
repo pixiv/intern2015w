@@ -1,11 +1,16 @@
 {% extends "layout.tpl.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <form action="/login" class="loginform">
+    {% if error %}
+        <div>
+            {{ error }}
+        </div>
+    {% endif %}
+    <form action="/login" method=post class="loginform">
         <fieldset>
             <legend>Login</legend>
             <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
-            <input name=password placeholder="パスワード">
+            <input name=password type="password" placeholder="パスワード">
             <button type=submit>Login</button>
         </fieldset>
     </form>
