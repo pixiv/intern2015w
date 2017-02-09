@@ -16,19 +16,22 @@ final class login
             return new Response\RedirectResponse('/');
         }
 
+        $user = filter_input(INPUT_POST, 'user', FILTER_VALIDATE_REGEXP, ['options' =>
+            ['regexp' => '/^[a-zA-Z0-9]+$/']
+        ]);
+        $pass = filter_input(INPUT_POST, 'password');
+
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
-            $user = trim($_REQUEST['user']);
-            $pass = $_REQUEST['password'];
+        if (!empty($user) && !empty($pass) && $user !== 'system') {
             $query
                 = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = \"${user}\" "
-                . "  AND `user_passwords`.`password` = \"${pass}\" ";
+                . 'WHERE `users`.`slug` = :user '
+                . '  AND `user_passwords`.`password` = :pass';
             $stmt = db()->prepare($query);
-            $stmt->execute();
+            $stmt->execute([':user' => $user, ':pass' => $pass]);
 
             if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                 $app->session->set('user_id', $login['id']);
@@ -39,7 +42,7 @@ final class login
         }
 
         return new Response\TwigResponse('login.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+            'user' => $user ?? null,
         ]);
     }
 }

@@ -1,7 +1,7 @@
 {% extends "layout.tpl.html" %}
 {% block title %}Regist{% endblock %}
 {% block content %}
-    <form action="/regist" class="loginform">
+    <form action="/regist" method="post" class="loginform">
         <fieldset>
             <legend>Regist</legend>
             <input name=user value="{{ user }}" required placeholder="ユーザー名" >

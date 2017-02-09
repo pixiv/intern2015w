@@ -12,12 +12,15 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['slug']) ?? '');
+        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_SPECIAL_CHARS);
+        $slug = filter_input(INPUT_POST, 'slug', FILTER_VALIDATE_REGEXP, ['options' =>
+            ['regexp' => '/^[a-zA-Z0-9]+$/']
+        ]);
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+        if (!empty($name) && !empty($slug) && !self::isTyouhuku($slug)
+         && self::regist($slug, $name, $app->getLoginUser())
         ) {
-            return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
+            return new Response\RedirectResponse('/rooms/' . $slug);
         }
 
         return new Response\RedirectResponse('/');
@@ -25,9 +28,9 @@ final class add_room
 
     private static function isTyouhuku(string $slug): bool
     {
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"${slug}\" ";
+        $query = 'SELECT * FROM `rooms` WHERE `slug` = :slug';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':slug' => $slug]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
@@ -35,17 +38,17 @@ final class add_room
 
     private static function regist($slug, $name, $user): bool
     {
-        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = 'INSERT INTO `rooms`(`slug`, `name`) VALUES( :slug, :name )';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':slug' => $slug, ':name' => $name]);
         $id = db()->lastInsertId();
 
         $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
         $user_name = $user->name;
-        $message = str_replace('"', '\\"', "**{$user_name}さん**が部屋を作りました！");
-        $query = "INSERT INTO `posts` VALUES( {$id}, 0, \"{$now}\", \"{$message}\" )";
+        $message = "**{$user_name}さん**が部屋を作りました！";
+        $query = 'INSERT INTO `posts` VALUES( :id, 0, :now, :message )';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':id' => $id, ':now' => $now, ':message' => $message]);
 
         return true;
     }

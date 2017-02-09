@@ -16,13 +16,13 @@ call_user_func(function(){
     $routing_map = [
         'logout'   => ['GET',  '/logout',      'logout'],
         'login'    => ['GET',  '/login',       'login'],
-                      ['GET',  '/login',       'login'],
+                      ['POST', '/login',       'login'],
         'regist'   => ['GET',  '/regist',      'regist'],
                       ['POST', '/regist',      'regist'],
-        'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
-                      ['POST', '/rooms/:slug', 'room', ['slug' => '/[-a-zA-Z]+/']],
+        'room'     => ['GET',  '/rooms/:slug', 'room', ['slug' => '/[a-zA-Z0-9]+/']],
+                      ['POST', '/rooms/:slug', 'room', ['slug' => '/[a-zA-Z0-9]+/']],
         'add_romm' => ['POST', '/add_room',    'add_room'],
-        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[-a-zA-Z]+/']],
+        'user'     => ['GET',  '/:user',       'user', ['user' => '/@[a-zA-Z0-9]+/']],
         'index'    => ['GET',  '/',            'top'],
         '#404'     =>                          'fileloader',
     ];

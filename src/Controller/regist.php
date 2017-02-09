@@ -11,10 +11,14 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
+        $user = filter_input(INPUT_POST, 'user', FILTER_SANITIZE_SPECIAL_CHARS);
+        $slug = filter_input(INPUT_POST, 'slug', FILTER_VALIDATE_REGEXP, ['options' =>
+            ['regexp' => '/^[a-zA-Z0-9]+$/']
+        ]);
+        $password = filter_input(INPUT_POST, 'password');
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+        if (!empty($user) && !empty($slug) && !empty($password) && !self::isTyouhuku($user)) {
+            $login = self::regist($slug, $user, $password);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -23,8 +27,7 @@ class regist
         }
 
         return new Response\TwigResponse('regist.tpl.html', [
-            'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
-            'is_daburi' => $is_daburi,
+            'user' => $user ?? null,
         ]);
     }
 
@@ -37,9 +40,9 @@ class regist
 
         $user = trim($user_name);
         $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        $query = 'SELECT * FROM `users` WHERE `slug` = :user';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':user' => $user]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
@@ -47,14 +50,14 @@ class regist
 
     private static function regist($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = 'INSERT INTO `users`(`slug`, `name`) VALUES( :slug, :name )';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':slug' => $slug, ':name' => $name]);
 
         $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
+        $query = 'INSERT INTO `user_passwords` VALUES( :id, :password )';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([':id' => $id, ':password' => $password]);
 
         return [
             'id' => $id,
