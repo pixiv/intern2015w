@@ -14,32 +14,32 @@ final class room
     {
         $room  = $action->param['slug'];
 
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"{$room}\"";
+        $query = "SELECT * FROM `rooms` WHERE `slug` = ?";
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$room]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!empty($_REQUEST['message'])) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-            $message = str_replace('"', '\\"', $_REQUEST['message']);
+            $message = $_REQUEST['message'];
             $user_id = $_REQUEST['user_id'];
-            $query = "INSERT INTO `posts` VALUES( {$data['id']}, {$user_id}, \"{$now}\", \"{$message}\" )";
+            $query = "INSERT INTO `posts` VALUES( ?,?,?,? )";
             $stmt = db()->prepare($query);
-            $stmt->execute();
+            $stmt->execute([$data['id'],$user_id,$now,$message]);
         }
 
-        $query = "SELECT * FROM `posts` WHERE `room_id` = {$data['id']} ORDER BY datetime(`posted_at`) DESC LIMIT 100";
+        $query = "SELECT * FROM `posts` WHERE `room_id` = ? ORDER BY datetime(`posted_at`) DESC LIMIT 100";
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$data['id']]);
         $talk = $stmt->fetchALL(\PDO::FETCH_ASSOC);
 
         $users = [];
         foreach ($talk as $s) {
             $user_id = $s['user_id'];
             if (empty($users[$user_id])) {
-                $query = "SELECT * FROM `users` WHERE `id` = {$user_id}";
+                $query = "SELECT * FROM `users` WHERE `id` = ?";
                 $stmt = db()->prepare($query);
-                $stmt->execute();
+                $stmt->execute([$user_id]);
                 $users[$user_id] = $stmt->fetch(\PDO::FETCH_ASSOC);
             }
         }
