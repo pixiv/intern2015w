@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Nyaan\Response;
+use Nyaan\Response\TemplateResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -16,7 +16,7 @@ final class top
         $stmt->execute();
         $rooms = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        return new Response\TemplateResponse('index.tpl.html', [
+        return new TemplateResponse('index.tpl.html', [
             'rooms' => $rooms,
         ]);
     }

@@ -15,6 +15,7 @@ namespace Nyaan;
  * @property-read array $post   $_POST
  * @proprety-read \Baguette\Session\SessionInterface $session
  */
+
 final class Application extends \Baguette\Application
 {
     public function __get($name) { return $this->$name; }
@@ -50,6 +51,23 @@ final class Application extends \Baguette\Application
         return $this->session->get('user_id', ['default' => 0]) > 0;
     }
 
+    public function setLoginUser(string $user_slug): bool
+    {
+        $query = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
+                 . 'FROM `users` WHERE `users`.`slug` = ?';
+        $stmt = db()->prepare($query);
+        $stmt->execute([$user_slug]);
+
+        if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $this->session->set('user_id', $login['id']);
+            $this->session->set('user_slug', $login['slug']);
+            $this->session->set('user_name', $login['name']);
+            return true;
+        }
+
+        return false;
+    }
+
     public function getLoginUser(): \stdClass
     {
         static $user;
@@ -60,6 +78,35 @@ final class Application extends \Baguette\Application
         $user->name = $this->session->get('user_name', ['default' => 0]);
 
         return $user;
+    }
+
+    public function getAuthenticityToken(): string
+    {
+        return $this->session->get('authenticity_token', ['default' => 'null']);
+    }
+
+    public function setAuthenticityToken(): string
+    {
+        $token = base64_encode(random_bytes(64));
+        $this->session->set('authenticity_token', $token);
+        return $token;
+    }
+
+    public function verifyAuthenticityToken(): bool
+    {
+        if ($this->server['REQUEST_METHOD'] === 'GET'
+            || $this->server['REQUEST_METHOD'] === 'HEAD'
+        )
+            return true;
+
+        if (isset($this->post['authenticity_token'])
+            && $this->post['authenticity_token'] === self::getAuthenticityToken()
+        ) {
+            self::setAuthenticityToken();
+            return true;
+        }
+
+        return false;
     }
 
     public static function getRoutingMap(): array

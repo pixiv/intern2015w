@@ -6,17 +6,18 @@
             <input name=message>
             <input name=user_id type=hidden value={{ loginUser.id }}>
             <input name=slug type=hidden value={{ slug }}>
+            <input type=hidden name=authenticity_token value="{{ authenticity_token }}">
             <button name=submit>更新</button>
         </form>
     {% else %}
         <a href="/login">ログイン</a>
     {% endif %}
     <section class="content oneline">
-        <h1>{{ room.name }}[{{ room.slug }}]</h1>
+        <h1>{{ room.name|e }}[{{ room.slug|e }}]</h1>
     </section>
     <ul class="chat">
         {% for t in talk %}
-            <li><a href="/@{{ users[t.user_id].slug }}" title="{{ users[t.user_id].name }}">@{{ users[t.user_id].slug }}</a>: {{ markdown(t.message) }} <time datetime="{{ t.posted_at|date('Y-m-d\\TH:i:s+09:00') }}">({{ t.posted_at }})</time></li>
+            <li><a href="/@{{ users[t.user_id].slug|e }}" title="{{ users[t.user_id].name|e }}">@{{ users[t.user_id].slug|e }}</a>: {{ markdown(t.message|e) }} <time datetime="{{ t.posted_at|date('Y-m-d\\TH:i:s+09:00') }}">({{ t.posted_at|e }})</time></li>
         {% endfor %}
     </ul>
 {% endblock %}

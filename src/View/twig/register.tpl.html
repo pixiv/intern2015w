@@ -1,0 +1,18 @@
+{% extends "layout.tpl.html" %}
+{% block title %}Regist{% endblock %}
+{% block content %}
+<p>ログイン名は`[a-zA-Z0-9]+`にマッチする必要があります。</p>
+{% if is_daburi %}
+<p>指定されたログイン名は既に取得されています。別の物を選択して下さい。</p>
+{% endif %}
+    <form action="/register" class="loginform" method="post">
+        <fieldset>
+            <legend>Regist</legend>
+            <input name=user value="{{ user|e }}" required placeholder="ユーザー名" >
+            <input name=slug value="{{ slug|e }}" required placeholder="ログイン名"  pattern="[a-zA-Z0-9]+">
+            <input name=password required placeholder="パスワード" type="password">
+            <input type=hidden name=authenticity_token value="{{ authenticity_token }}">
+            <button type=submit>Submit</button>
+        </fieldset>
+    </form>
+{% endblock %}

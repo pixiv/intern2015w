@@ -7,24 +7,18 @@
                 <legend>部屋追加</legend>
                 <input name=name required placeholder="部屋名" >
                 URL: <code>http://{{ server.HTTP_HOST }}/rooms/<input name=slug required placeholder="slug" pattern="[a-zA-Z0-9]+"></code>
-                <input name=user_id value="{{ loginUser.id }}" type=hidden>
+                <input name=user_id value="{{ loginUser.id|e }}" type=hidden>
+                <input type=hidden name=authenticity_token value="{{ authenticity_token }}">
                 <button type=submit>追加</button>
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
-            <fieldset>
-                <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
-                <button type=submit>Login</button>
-            </fieldset>
-        </form>
+        {% include 'login.partial.html' %}
     {% endif %}
     <h2>部屋一覧</h2>
     <ul>
         {% for r in rooms %}
-            <li><a href="/rooms/{{ r.slug }}">{{ r.name }}</a>
+            <li><a href="/rooms/{{ r.slug|e }}">{{ r.name|e }}</a>
         {% endfor %}
     </ul>
 {% endblock %}
