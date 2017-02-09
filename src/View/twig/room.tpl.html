@@ -6,6 +6,7 @@
             <input name=message>
             <input name=user_id type=hidden value={{ loginUser.id }}>
             <input name=slug type=hidden value={{ slug }}>
+            <input type=hidden name=csrf_token value="{{ csrf_token }}" />
             <button name=submit>更新</button>
         </form>
     {% else %}

@@ -1,6 +1,7 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
+use Baguette\Response\RedirectResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -12,40 +13,52 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['slug']) ?? '');
+        $is_valid = self::isValid($_REQUEST['slug'] ?? '');
+        $is_duplicated = self::isDuplicated($_REQUEST['slug'] ?? '');
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+        if ($is_valid && !$is_duplicated && isset($_REQUEST['slug'], $_REQUEST['name'])
+            && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+            && $app->validateToken($_REQUEST['csrf_token'] ?? '')
         ) {
-            return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
+            return new RedirectResponse('/rooms/' . $_REQUEST['slug']);
         }
 
-        return new Response\RedirectResponse('/');
+        return new RedirectResponse('/');
     }
 
-    private static function isTyouhuku(string $slug): bool
+    private static function isValid(string $slug): bool
     {
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"${slug}\" ";
+
+        if (!preg_match('/^[a-zA-Z0-9]+$/', $slug)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static function isDuplicated(string $slug): bool
+    {
+        $query = "SELECT * FROM `rooms` WHERE `slug` = ? ";
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$slug]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $user): bool
+    private static function register($slug, $name, $user): bool
     {
-        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( ?, ? ); ";
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$slug, $name]);
         $id = db()->lastInsertId();
 
         $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
         $user_name = $user->name;
-        $message = str_replace('"', '\\"', "**{$user_name}さん**が部屋を作りました！");
-        $query = "INSERT INTO `posts` VALUES( {$id}, 0, \"{$now}\", \"{$message}\" )";
+        $message = "**{$user_name}さん**が部屋を作りました！";
+        $query = "INSERT INTO `posts` VALUES( ?, 0, ?, ? )";
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$id, $now, $message]);
 
         return true;
     }

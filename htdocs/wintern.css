@@ -7,15 +7,12 @@ body {
     background-image: url(/wall.jpg);
     background-attachment: fixed;
     min-height: 100%;
-    color: #CCC;
+    color: #fff;
 }
 
 a {
+    color: #6af;
     text-decoration: none;
-}
-
-a:visited {
-    color: #11C;
 }
 
 #navi {

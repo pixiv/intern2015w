@@ -1,6 +1,7 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response\TemplateResponse;
+use Baguette\Response\RedirectResponse;
 
 /**
  * @package   Nyaan\Controller
@@ -13,32 +14,32 @@ final class login
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         if ($app->session->get('user_id', ['default' => false])) {
-            return new Response\RedirectResponse('/');
+            return new RedirectResponse('/');
         }
 
         // systemは特殊なユーザーなのでログインできない
-        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
+        if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system' && $app->validateToken($_REQUEST['csrf_token'] ?? '')) {
             $user = trim($_REQUEST['user']);
-            $pass = $_REQUEST['password'];
             $query
-                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
+                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` , `user_passwords`.`password` '
                 . 'FROM `users` '
                 . 'INNER JOIN `user_passwords` '
                 . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = \"${user}\" "
-                . "  AND `user_passwords`.`password` = \"${pass}\" ";
+                . "WHERE `users`.`slug` = ? ";
             $stmt = db()->prepare($query);
-            $stmt->execute();
+            $stmt->execute([$user]);
 
-            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $app->session->set('user_id', $login['id']);
-                $app->session->set('user_slug', $login['slug']);
-                $app->session->set('user_name', $login['name']);
-                return new Response\RedirectResponse('/');
+            if ($login = $stmt->fetch(\PDO::FETCH_ASSOC) ) {
+                if(password_verify($_REQUEST['password'], $login['password'])) {
+                    $app->session->set('user_id', $login['id']);
+                    $app->session->set('user_slug', $login['slug']);
+                    $app->session->set('user_name', $login['name']);
+                    return new RedirectResponse('/');
+                }
             }
         }
 
-        return new Response\TwigResponse('login.tpl.html', [
+        return new TemplateResponse('login.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
         ]);
     }

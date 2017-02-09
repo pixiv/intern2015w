@@ -1,0 +1,20 @@
+{% extends "layout.tpl.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+    {% if is_valid == false %}
+        <p>ログインIDが使用できないものです。</p>
+    {% endif %}
+    {% if is_duplicated == true %}
+        <p>すでに登録されたログインIDです。</p>
+    {% endif %}
+    <form action="/register" class="loginform" method="post">
+        <fieldset>
+            <legend>Register</legend>
+            <input name=user value="{{ user }}" required placeholder="ユーザー名" >
+            <input name=slug value="{{ slug }}" required placeholder="ログイン名" pattern="[a-zA-Z0-9]+">
+            <input type=password name=password required placeholder="パスワード">
+            <input type=hidden name=csrf_token value="{{ csrf_token }}" />
+            <button type=submit>Submit</button>
+        </fieldset>
+    </form>
+{% endblock %}

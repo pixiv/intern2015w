@@ -22,6 +22,12 @@ final class Application extends \Baguette\Application
     /** @var \Baguette\Session\SessionInterface */
     private $session;
 
+    public $logger;
+
+    /** csrf */
+    private $csrf_manager;
+    private $tokenId = '__csrf_token__';
+
     /**
      * @param  \Teto\Routing\Action $action
      * @return \Baguette\Response\ResponseInterface
@@ -40,9 +46,39 @@ final class Application extends \Baguette\Application
         return $response;
     }
 
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+        $this->logger->info('start logger');
+    }
+
     public function setSession(\Baguette\Session\SessionInterface $session)
     {
         $this->session = $session;
+    }
+
+    public function setCsrfManager(\Symfony\Component\Security\Csrf\CsrfTokenManagerInterface $manager)
+    {
+        $this->csrf_manager = $manager;
+    }
+
+    public function generateToken()
+    {
+        $csrfToken = $this->csrf_manager->getToken($this->tokenId)->getValue();
+        return $csrfToken;
+    }
+
+    public function validateToken($string)
+    {
+        $csrfToken = new \Symfony\Component\Security\Csrf\CsrfToken($this->tokenId, $string);
+
+        $valid = !empty($string) && $this->csrf_manager->isTokenValid($csrfToken);
+        if($valid) {
+            $this->csrf_manager->refreshToken($this->tokenId);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function isLoggedIn(): bool
@@ -69,4 +105,5 @@ final class Application extends \Baguette\Application
 
         return $routing_map;
     }
+
 }
