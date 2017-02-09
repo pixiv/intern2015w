@@ -4,6 +4,7 @@
     {% if isLoggedIn %}
         <form action="/rooms/{{ slug }}" class=comment method=post>
             <input name=message>
+            <input name=ticket type=hidden value={{ ticket }}>
             <input name=user_id type=hidden value={{ loginUser.id }}>
             <input name=slug type=hidden value={{ slug }}>
             <button name=submit>更新</button>
