@@ -1,12 +1,13 @@
 {% extends "layout.tpl.html" %}
-{% block title %}Regist{% endblock %}
+{% block title %}Sign up{% endblock %}
 {% block content %}
-    <form action="/regist" class="loginform">
+    <form action="/register" class="loginform" method=post>
         <fieldset>
-            <legend>Regist</legend>
+            <legend>Sign up</legend>
             <input name=user value="{{ user }}" required placeholder="ユーザー名" >
             <input name=slug value="{{ slug }}" required placeholder="ログイン名"  pattern="[a-zA-Z0-9]+">
-            <input name=password required placeholder="パスワード">
+            <input name=password required placeholder="パスワード" type="password">
+            <input name=password_confirmation required placeholder="パスワード(確認)" type="password">
             <button type=submit>Submit</button>
         </fieldset>
     </form>

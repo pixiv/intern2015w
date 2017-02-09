@@ -2,8 +2,7 @@
 namespace Nyaan\Controller;
 use Baguette\Response;
 
-// FIXME: そんな英語はない
-class regist
+class register
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
@@ -11,10 +10,25 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
+        $is_daburi = self::isTyouhuku($_REQUEST['slug'] ?? '');
 
-        if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+        if (!isset($_REQUEST['user'], $_REQUEST['slug'], $_REQUEST['password'], $_REQUEST['password_confirmation'])) {
+            return new Response\TwigResponse('register.tpl.html', [
+              'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+              'is_daburi' => $is_daburi,
+            ]);
+        }
+
+        if ($_REQUEST['password'] != $_REQUEST['password_confirmation']) {
+            return new Response\TwigResponse('register.tpl.html', [
+              'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
+              'is_daburi' => $is_daburi,
+            ]);
+        }
+
+        if (!$is_daburi) {
+            $password_hash = password_hash($_REQUEST['password'], PASSWORD_DEFAULT);
+            $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $password_hash);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -22,7 +36,7 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('regist.tpl.html', [
+        return new Response\TwigResponse('register.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
         ]);
@@ -32,23 +46,26 @@ class regist
     {
         // systemは特殊なユーザーなので登録できない
         if (empty($user_name) || $user_name === 'system') {
-            return false;
+            return true;
         }
 
         $user = trim($user_name);
         $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        $query = "SELECT * FROM `users` WHERE `slug` = :slug ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(':slug', $user);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $password): array
+    private static function register($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( :slug, :name ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(':slug', $slug);
+        $stmt->bindParam(':name', $name);
         $stmt->execute();
 
         $id = db()->lastInsertId();

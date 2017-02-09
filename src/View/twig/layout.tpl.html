@@ -12,9 +12,13 @@
             <h1><a href="/">Wintern Chat</a></h1>
             {% if isLoggedIn %}
                 <div>
-                    <a href="/@{{ loginUser.slug }}">{{ loginUser.name }}</a>
+                    <a href="/@{{ loginUser.slug }}">{{ loginUser.name }}@{{ loginUser.slug }}</a>
                     <small><a href="/logout">ログアウト</a></small>
                 </div>
+            {% else %}
+                <div>
+                    <a href="/register">Sign_up</a>
+                </div>                
             {% endif %}
 
         </div>

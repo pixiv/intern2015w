@@ -14,17 +14,20 @@ final class room
     {
         $room  = $action->param['slug'];
 
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"{$room}\"";
+        $query = "SELECT * FROM `rooms` WHERE `slug` = :slug";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(':slug', $room);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if (!empty($_REQUEST['message'])) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
-            $message = str_replace('"', '\\"', $_REQUEST['message']);
-            $user_id = $_REQUEST['user_id'];
-            $query = "INSERT INTO `posts` VALUES( {$data['id']}, {$user_id}, \"{$now}\", \"{$message}\" )";
+            $message = htmlspecialchars(str_replace('"', '\\"', $_REQUEST['message']));
+            $user_id = $_SESSION['user_id'];
+            $query = "INSERT INTO `posts` VALUES( {$data['id']}, :user_id, \"{$now}\", :message )";
             $stmt = db()->prepare($query);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':message', $message);
             $stmt->execute();
         }
 

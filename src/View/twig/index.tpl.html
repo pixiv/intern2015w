@@ -12,11 +12,11 @@
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
+        <form action="/login" class="loginform" method=post>
             <fieldset>
                 <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
+                <input name=user value="{{ user }}" placeholder="ユーザー名" pattern="[a-zA-Z0-9]+">
+                <input name=password placeholder="パスワード" type="password">
                 <button type=submit>Login</button>
             </fieldset>
         </form>
@@ -25,6 +25,7 @@
     <ul>
         {% for r in rooms %}
             <li><a href="/rooms/{{ r.slug }}">{{ r.name }}</a>
+                : {{ r.slug }}
         {% endfor %}
     </ul>
 {% endblock %}
