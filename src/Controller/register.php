@@ -2,8 +2,7 @@
 namespace Nyaan\Controller;
 use Baguette\Response;
 
-// FIXME: そんな英語はない
-class regist
+class register
 {
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
@@ -11,10 +10,15 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['user']) ?? '');
+        $s = isset($_REQUEST['slug']) ?? '';
+        if ($s == 1) {
+          $s = $_REQUEST['slug'];
+        }
+
+        $is_daburi = self::isTyouhuku($s);
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['password'])) {
-            $login = self::regist($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
+            $login = self::register($_REQUEST['slug'], $_REQUEST['user'], $_REQUEST['password']);
             $app->session->set('user_id', $login['id']);
             $app->session->set('user_slug', $login['slug']);
             $app->session->set('user_name', $login['name']);
@@ -22,38 +26,42 @@ class regist
             return new Response\RedirectResponse('/');
         }
 
-        return new Response\TwigResponse('regist.tpl.html', [
+        return new Response\TwigResponse('register.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
             'is_daburi' => $is_daburi,
         ]);
     }
 
-    private static function isTyouhuku(string $user_name): bool
+    private static function isTyouhuku(string $slug_name): bool
     {
         // systemは特殊なユーザーなので登録できない
-        if (empty($user_name) || $user_name === 'system') {
+        if (empty($slug_name) || $slug_name === 'system') {
             return false;
         }
 
-        $user = trim($user_name);
-        $pass = $_REQUEST['password'];
-        $query = "SELECT * FROM `users` WHERE `slug` = \"${user}\" ";
+        $user = trim($slug_name);
+        $query = "SELECT * FROM `users` WHERE `slug` = ? ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $user, \PDO::PARAM_STR);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $password): array
+    private static function register($slug, $name, $password): array
     {
-        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = "INSERT INTO `users`(`slug`, `name`) VALUES( ?, ? ); ";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $slug, \PDO::PARAM_STR);
+        $stmt->bindParam(2, $name, \PDO::PARAM_STR);
         $stmt->execute();
 
         $id = db()->lastInsertId();
-        $query = "INSERT INTO `user_passwords` VALUES( {$id}, \"{$password}\" ); ";
+        $query = "INSERT INTO `user_passwords` VALUES( {$id}, ? ); ";
         $stmt = db()->prepare($query);
+        $password_h = password_hash($password, PASSWORD_DEFAULT, array('cost' => 10));
+        $stmt->bindParam(1, $password_h, \PDO::PARAM_STR);
         $stmt->execute();
 
         return [

@@ -16,10 +16,13 @@
             <fieldset>
                 <legend>Login</legend>
                 <input name=user value="{{ user }}" >
-                <input name=password>
+                <input name=password type=password>
                 <button type=submit>Login</button>
             </fieldset>
         </form>
+        <div id="navi">
+          <h1>登録は<a href="/register">こちらから</a></h1>
+        </div>
     {% endif %}
     <h2>部屋一覧</h2>
     <ul>

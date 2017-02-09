@@ -14,17 +14,25 @@ final class room
     {
         $room  = $action->param['slug'];
 
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"{$room}\"";
+        $query = "SELECT * FROM `rooms` WHERE `slug` = ?";
         $stmt = db()->prepare($query);
+        $stmt->bindParam(1, $room, \PDO::PARAM_STR);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if (is_null($data['slug'])) {
+          return new Response\TemplateResponse('404.tpl.html', [], 404);
+        }
 
         if (!empty($_REQUEST['message'])) {
             $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
             $message = str_replace('"', '\\"', $_REQUEST['message']);
             $user_id = $_REQUEST['user_id'];
-            $query = "INSERT INTO `posts` VALUES( {$data['id']}, {$user_id}, \"{$now}\", \"{$message}\" )";
+            $query = "INSERT INTO `posts` VALUES( {$data['id']}, ?, ?, ? )";
             $stmt = db()->prepare($query);
+            $stmt->bindParam(1, $user_id, \PDO::PARAM_INT);
+            $stmt->bindParam(2, $now, \PDO::PARAM_STR);
+            $stmt->bindParam(3, $message, \PDO::PARAM_STR);
             $stmt->execute();
         }
 
@@ -37,8 +45,9 @@ final class room
         foreach ($talk as $s) {
             $user_id = $s['user_id'];
             if (empty($users[$user_id])) {
-                $query = "SELECT * FROM `users` WHERE `id` = {$user_id}";
+                $query = "SELECT * FROM `users` WHERE `id` = ?";
                 $stmt = db()->prepare($query);
+                $stmt->bindParam(1, $user_id, \PDO::PARAM_INT);
                 $stmt->execute();
                 $users[$user_id] = $stmt->fetch(\PDO::FETCH_ASSOC);
             }
