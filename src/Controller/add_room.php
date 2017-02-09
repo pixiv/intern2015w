@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -12,10 +12,18 @@ final class add_room
 {
     function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
-        $is_daburi = self::isTyouhuku(isset($_REQUEST['slug']) ?? '');
+        $slug = NULL;
+        if (isset($_REQUEST['slug'])) {
+            preg_match('/[-a-zA-Z0-9]+/', $_REQUEST['slug'], $matches);
+            if (count($matches) > 0) {
+                $slug = $matches[0];
+            }
+        }
+        $is_daburi = $slug === NULL || self::isTyouhuku($slug);
 
         if (!$is_daburi && isset($_REQUEST['slug'], $_REQUEST['name'])
-            && self::regist($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
+            && $app->isTokenVerified
+            && self::register($_REQUEST['slug'], $_REQUEST['name'], $app->getLoginUser())
         ) {
             return new Response\RedirectResponse('/rooms/' . $_REQUEST['slug']);
         }
@@ -25,27 +33,26 @@ final class add_room
 
     private static function isTyouhuku(string $slug): bool
     {
-        $query = "SELECT * FROM `rooms` WHERE `slug` = \"${slug}\" ";
+        $query = 'SELECT * FROM `rooms` WHERE `slug` = ?';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$slug]);
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return !empty($data);
     }
 
-    private static function regist($slug, $name, $user): bool
+    private static function register($slug, $name, $user): bool
     {
-        $query = "INSERT INTO `rooms`(`slug`, `name`) VALUES( \"{$slug}\", \"{$name}\" ); ";
+        $query = 'INSERT INTO `rooms` (`slug`, `name`) VALUES(?, ?)';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$slug, $name]);
         $id = db()->lastInsertId();
 
-        $now = date('Y-m-d H:i:s', strtotime('+9 hours'));
         $user_name = $user->name;
-        $message = str_replace('"', '\\"', "**{$user_name}さん**が部屋を作りました！");
-        $query = "INSERT INTO `posts` VALUES( {$id}, 0, \"{$now}\", \"{$message}\" )";
+        $message = "**{$user_name}さん**が部屋を作りました！";
+        $query = 'INSERT INTO `posts` (`room_id`, `user_id`, `message`) VALUES(?, 0, ?)';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$id, $message]);
 
         return true;
     }

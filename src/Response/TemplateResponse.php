@@ -17,6 +17,8 @@ final class TemplateResponse extends \Baguette\Response\TwigResponse
      */
     public function render(\Baguette\Application $app)
     {
+        $token = csrf_token();
+        $app->session->set('token', $token);
         $params = $this->params + [
             'server'  => $app->server,
             'cookie'  => $app->cookie,
@@ -25,6 +27,7 @@ final class TemplateResponse extends \Baguette\Response\TwigResponse
             'now'     => $app->now,
             'isLoggedIn' => $app->isLoggedIn(),
             'loginUser'  => $app->getLoginUser(),
+            'token'   => $token,
         ];
 
         return static::$twig->render($this->tpl_name, $params);
@@ -32,7 +35,7 @@ final class TemplateResponse extends \Baguette\Response\TwigResponse
 
     /**
      * @param  \Baguette\Application $_ is not used.
-      */
+     */
     public function getHttpStatusCode(\Baguette\Application $_): int
     {
         return $this->status_code;

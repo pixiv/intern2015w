@@ -46,7 +46,7 @@ $queries = [
     'CREATE TABLE `rooms`( `id` INTEGER PRIMARY KEY, `slug` TEXT UNIQUE, `name` TEXT )',
     'CREATE TABLE `room_owners`( `user_id` INTEGER, `room_id` INTEGER )',
     'CREATE UNIQUE INDEX `room_owners_user_room` ON `room_owners`( `user_id`, `room_id` )',
-    'CREATE TABLE `posts`( `room_id` INTEGER, `user_id` INTEGER, `posted_at` TEXT, `message` TEXT ) ',
+    "CREATE TABLE `posts`( `room_id` INTEGER, `user_id` INTEGER, `posted_at` TEXT DEFAULT (datetime('now', 'localtime')), `message` TEXT )",
     'CREATE INDEX `post_user` ON `posts`( `user_id` )',
     'CREATE INDEX `post_room` ON `posts`( `room_id` )',
     'CREATE TABLE `mentions`( `to_user_id` INTEGER, `post_id` INTEGER )',
@@ -57,12 +57,12 @@ $queries = [
     'CREATE INDEX `in_room_user_id` ON `in_rooms`( `user_id` )',
 
     'INSERT INTO `users` VALUES( 0, "system", "System" )',
-    'INSERT INTO `user_passwords` VALUES( 0, "system" )',
+    'INSERT INTO `user_passwords` VALUES( 0, "' . password('system') . '" )',
     'INSERT INTO `users` VALUES( 1, "root", "super user" )',
-    'INSERT INTO `user_passwords` VALUES( 1, "nimda" )',
+    'INSERT INTO `user_passwords` VALUES( 1, "' . password('nimda') . '" )',
     'INSERT INTO `user_profile` VALUES( 1, "http://pixiv.co.jp/", "pixiv", "AB" )',
     'INSERT INTO `users` VALUES( 2, "chobi", "チョビ" )',
-    'INSERT INTO `user_passwords` VALUES( 2, "cbcb" )',
+    'INSERT INTO `user_passwords` VALUES( 2, "' . password('cbcb') . '" )',
     'INSERT INTO `user_profile` VALUES( 2, "http://times.pixiv.net/post/38140118669/%E3%83%94%E3%82%AF%E3%82%B7%E3%83%96%E3%81%AE%E7%A4%BE%E5%93%A1%E7%8A%AC", "chobi_pixiv", "Bombay" )',
     'INSERT INTO `rooms` VALUES( 1, "operators", "運営委員会" )',
     'INSERT INTO `rooms` VALUES( 2, "idobata-talks", "雑談の部屋" )',
@@ -74,11 +74,11 @@ foreach ($queries as $q) {
     fwrite(STDERR, "[SQL] {$q}\n");
     $stmt = $pdo->prepare($q);
     if ($stmt === false) {
-       fwrite(STDERR, sprintf("[Error] Query error \n"));
-       die;
+        fwrite(STDERR, sprintf("[Error] Query error \n"));
+        die;
     }
     if (!$stmt->execute()) {
-       fwrite(STDERR, sprintf("[Error] %s\n", print_r($stmt->errorInfo(), true)));
-       die;
+        fwrite(STDERR, sprintf("[Error] %s\n", print_r($stmt->errorInfo(), true)));
+        die;
     }
 }

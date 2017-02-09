@@ -6,20 +6,14 @@
             <fieldset>
                 <legend>部屋追加</legend>
                 <input name=name required placeholder="部屋名" >
-                URL: <code>http://{{ server.HTTP_HOST }}/rooms/<input name=slug required placeholder="slug" pattern="[a-zA-Z0-9]+"></code>
+                URL: <code>http://{{ server.HTTP_HOST }}/rooms/<input name=slug required placeholder="slug" pattern="[-a-zA-Z0-9]+"></code>
                 <input name=user_id value="{{ loginUser.id }}" type=hidden>
+                <input name="token" value="{{ token }}" type="hidden">
                 <button type=submit>追加</button>
             </fieldset>
         </form>
     {% else %}
-        <form action="/login" class="loginform">
-            <fieldset>
-                <legend>Login</legend>
-                <input name=user value="{{ user }}" >
-                <input name=password>
-                <button type=submit>Login</button>
-            </fieldset>
-        </form>
+		{% include "loginform.tpl.html" %}
     {% endif %}
     <h2>部屋一覧</h2>
     <ul>

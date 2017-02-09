@@ -13,10 +13,14 @@ final class user
     public function action(\Baguette\Application $app, \Teto\Routing\Action $action)
     {
         $name = ltrim($action->param['user'], '@');
-        $query = "SELECT * FROM `users` WHERE `slug` = \"{$name}\"";
+        $query = 'SELECT * FROM `users` LEFT JOIN `user_profile` ON `users`.`id` = `user_profile`.`user_id` WHERE `slug` = ?';
         $stmt = db()->prepare($query);
-        $stmt->execute();
+        $stmt->execute([$name]);
         $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if ($user === false) {
+            return new Response\RedirectResponse('/');
+        }
 
         return new Response\TemplateResponse('user.tpl.html', [
             'user' => $user,

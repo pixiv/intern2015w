@@ -1,6 +1,6 @@
 <?php
 namespace Nyaan\Controller;
-use Baguette\Response;
+use Nyaan\Response;
 
 /**
  * @package   Nyaan\Controller
@@ -16,29 +16,34 @@ final class login
             return new Response\RedirectResponse('/');
         }
 
+        if (!$app->isTokenVerified) {
+            return new Response\RedirectResponse('/');
+        }
+
         // systemは特殊なユーザーなのでログインできない
         if (isset($_REQUEST['user'], $_REQUEST['password']) && $_REQUEST['user'] != 'system') {
             $user = trim($_REQUEST['user']);
             $pass = $_REQUEST['password'];
-            $query
-                = 'SELECT `users`.`id`, `users`.`slug`, `users`.`name` '
-                . 'FROM `users` '
-                . 'INNER JOIN `user_passwords` '
-                . '   ON `users`.`id` = `user_passwords`.`user_id` '
-                . "WHERE `users`.`slug` = \"${user}\" "
-                . "  AND `user_passwords`.`password` = \"${pass}\" ";
+            $query = 'SELECT * FROM `users` WHERE `slug` = ?';
             $stmt = db()->prepare($query);
-            $stmt->execute();
+            $stmt->execute([$user]);
 
             if ($login = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-                $app->session->set('user_id', $login['id']);
-                $app->session->set('user_slug', $login['slug']);
-                $app->session->set('user_name', $login['name']);
-                return new Response\RedirectResponse('/');
+                $query = 'SELECT `password` FROM `user_passwords` WHERE `user_id` = ?';
+                $stmt = db()->prepare($query);
+                $stmt->execute([$login['id']]);
+                $res = $stmt->fetch(\PDO::FETCH_ASSOC);
+                if ($res && password($pass, $res['password']) === true) {
+                    $app->refreshSession();
+                    $app->session->set('user_id', $login['id']);
+                    $app->session->set('user_slug', $login['slug']);
+                    $app->session->set('user_name', $login['name']);
+                    return new Response\RedirectResponse('/');
+                }
             }
         }
 
-        return new Response\TwigResponse('login.tpl.html', [
+        return new Response\TemplateResponse('login.tpl.html', [
             'user' => isset($_REQUEST['user']) ? $_REQUEST['user'] : null,
         ]);
     }
