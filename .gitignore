@@ -5,7 +5,7 @@
 /cache
 /phpunit.xml
 /vendor/*
-/.env
+/config/.env
 /.idea
 /*.iml
 /.vagrant

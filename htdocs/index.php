@@ -9,7 +9,7 @@ error_reporting(-1);
 try {
 call_user_func(function(){
     mb_internal_encoding("UTF-8");
-    $dotenv = new \Dotenv\Dotenv(dirname(__DIR__));
+    $dotenv = new \Dotenv\Dotenv(dirname(__DIR__) . '/config');
     $dotenv->overload();
     $dotenv->required('DB_DSN')->notEmpty();
 

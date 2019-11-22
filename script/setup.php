@@ -1,25 +1,28 @@
 #!/usr/bin/env php
 <?php
+
 use Symfony\Component\Filesystem\Filesystem;
-require __DIR__ . '/vendor/autoload.php';
+
+require __DIR__ . '/../vendor/autoload.php';
 
 error_reporting(E_ALL);
 
 $filesystem = new Filesystem();
 
+$base = \dirname(__DIR__);
 
-$env_path   = __DIR__ . '/.env';
-$sqlite     = __DIR__ . '/cache/db.sq3';
+$env_path   = $base . '/config/.env';
+$sqlite     = $base . '/cache/db.sq3';
 $sqlite_dsn = sprintf('sqlite:%s', $sqlite);
 
-$session_dir = __DIR__ . '/cache/session';
+$session_dir = $base . '/cache/session';
 if (file_exists($session_dir)) {
     $filesystem->remove($session_dir);
     fwrite(STDERR, "[DEL] {$session_dir}\n");
 }
 $filesystem->mkdir($session_dir);
 
-$twig_dir = __DIR__ . '/cache/twig';
+$twig_dir = $base . '/cache/twig';
 if (file_exists($twig_dir)) {
     $filesystem->remove($twig_dir);
     fwrite(STDERR, "[DEL] {$twig_dir}\n");
@@ -32,7 +35,8 @@ if (file_exists($sqlite)) {
     fwrite(STDERR, "[DEL] {$sqlite}\n");
 }
 
-$content = sprintf('DB_DSN = "%s"\n', $sqlite_dsn);
+
+$content = sprintf('DB_DSN = "%s"' . PHP_EOL, $sqlite_dsn);
 file_put_contents($env_path, $content);
 
 fwrite(STDERR, "[DSN] {$sqlite_dsn}\n");
