@@ -1,0 +1,2 @@
+#!/bin/sh
+docker-compose run php-cli php $(dirname $0)/script/setup.php
