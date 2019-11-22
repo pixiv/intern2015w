@@ -10,12 +10,9 @@ body {
     color: #CCC;
 }
 
-a {
+a, a:visited {
     text-decoration: none;
-}
-
-a:visited {
-    color: #11C;
+    color: #0F0;
 }
 
 #navi {
