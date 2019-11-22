@@ -43,8 +43,7 @@ call_user_func(function(){
     $app->setSession($session);
     $session->start();
 
-    $path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : $_SERVER['PHP_SELF'];
-    $path = ($path === '/index.php') ? '/' : $path;
+    $path = \explode('?', $_SERVER['REQUEST_URI'], 2)[0];
     $router = new \Teto\Routing\Router($routing_map);
     $action = $router->match($_SERVER['REQUEST_METHOD'], $path);
 
