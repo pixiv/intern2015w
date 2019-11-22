@@ -37,26 +37,40 @@ __Pull Requestは 2015/12/03 17:00 (JST) までに作成してください。__
 
 ## 開発環境について
 
-Debian GNU/Linux + PHP 7の環境を利用してください。
+PHP 7.1以上を利用してください。PHPは直接インストールしてもDocker Composeを使っても構いません。
 
-[Vagrant](https://www.vagrantup.com/)で[rlerdorf/php7dev](https://github.com/rlerdorf/php7dev)のBoxを利用することがおすすめです。
-
- * Vagrantの動作には[VirtualBox](https://www.virtualbox.org/)が必要です
- * 一部のWindows機ではBIOSの設定により仮想環境が動作しない場合があるので確認してください
-
-環境構築については[サポートチャット](https://idobata.io/organizations/pixiv/rooms/intern2015w_guest/join_request/fa64b276-3e72-4fe1-881f-b188091d3699)で支援しますので、わからないことは気軽に質問してください。
 
 ## セットアップ
+
+### Dockerを利用する場合
 
 ```sh
 git clone git@github.com:pixiv/intern2015w.git
 cd intern2015w
-vagrant up # 初回はBoxのダウンロードが必要なのでインターネット接続が必要なのと時間がかかります
-vagrant ssh # sshで仮想マシンの中に入れます
 
-cd /vagrant/
+# Docker Compose
+docker-compose build
+
+# セットアップ
+./composer install
+./setup
+
+# 起動
+docker-compose up -d
+
+# 終了
+dokcer-compose down
+```
+
+### 直接インストールする場合
+
+
+```
+git clone git@github.com:pixiv/intern2015w.git
+cd intern2015w
+
 composer install
-php ./setup
+php ./script/setup.php
 
 # サーバー起動
 php -S 0.0.0.0:3939 ./htdocs/index.php
