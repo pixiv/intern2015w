@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:8.0-apache
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -8,20 +8,13 @@ RUN apt-get update -y \
         libicu-dev \
         libgmp-dev \
         libmagic-dev \
+        libonig-dev \
         libedit-dev \
         libreadline-dev \
         libxml2-dev \
         sqlite3 \
         unzip \
     && rm -rf /var/lib/apt/lists/*
-
-RUN git clone https://github.com/nikic/php-ast.git \
-    && cd php-ast \
-    && phpize \
-    && ./configure \
-    && make install \
-    && echo 'extension=ast.so' > /usr/local/etc/php/php.ini \
-    && cd .. && rm -rf php-ast
 
 RUN docker-php-ext-install -j$(nproc) \
         curl \
@@ -32,6 +25,7 @@ RUN docker-php-ext-install -j$(nproc) \
         pcntl \
         pdo_mysql \
         readline \
+    && pecl install ast \
     && pecl install solr
 
 RUN a2enmod rewrite
