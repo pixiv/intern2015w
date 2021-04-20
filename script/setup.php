@@ -35,7 +35,7 @@ if (file_exists($sqlite)) {
     fwrite(STDERR, "[DEL] {$sqlite}\n");
 }
 
-
+is_dir($base . '/config') or mkdir($base . '/config');
 $content = sprintf('DB_DSN = "%s"' . PHP_EOL, $sqlite_dsn);
 file_put_contents($env_path, $content);
 
